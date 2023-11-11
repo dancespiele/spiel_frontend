@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://cayj4noi66rh1"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_pbdyw"]
+[ext_resource type="PackedScene" uid="uid://bclr3esviheme" path="res://assets/player.glb" id="1_u8gla"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/dialogue_label.gd" id="3_8iq8w"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yqlmk"]
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 3
+script = ExtResource("1_pbdyw")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="player" parent="Pivot" instance=ExtResource("1_u8gla")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 6, 0, 0, 0, 3, 0, -0.779506, 0)
+shape = SubResource("BoxShape3D_yqlmk")
+
+[node name="DialogueBot" type="RichTextLabel" parent="."]
+offset_top = -1.0
+offset_right = 1149.0
+offset_bottom = 325.0
+script = ExtResource("3_8iq8w")

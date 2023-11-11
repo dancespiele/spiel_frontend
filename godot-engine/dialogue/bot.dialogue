@@ -1,0 +1,27 @@
+~ main_menu
+
+Bot: Hello, What can I help you?
+- List token prices from Avalanche
+	do ask_token_price_list()
+	=> list_token_prices
+- Send token to other account to polygon
+	do ask_for_address()
+	Token: {{address_input}}!
+	do send_token(address_input)
+	=> token_sent
+- Play Destroy the ball
+	do play_destroy_the_ball()
+	=> END!
+- Nothing => END
+
+~ list_token_prices
+
+Bot: 
+	LINK: {{link}} AAVE: {{aave}} BTC: {{btc}}
+	ETH: {{eth}} MATIC: {{usdc}} APE: {{ape}}
+=> END!
+	
+~ token_sent
+
+Bot: The token is already sent to the account {{address_input}}
+=> END!

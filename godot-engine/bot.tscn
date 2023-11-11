@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b023x560ntcpf"]
+
+[ext_resource type="PackedScene" uid="uid://qj73wpjxq8w7" path="res://assets/bot.glb" id="1_x0ii0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pv2ky"]
+
+[node name="Bot" type="CharacterBody3D" groups=["bot"]]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(4, 0, 0, 0, 7, 0, 0, 0, 4, 0, -0.541186, 0)
+shape = SubResource("BoxShape3D_pv2ky")
+
+[node name="bot" parent="." instance=ExtResource("1_x0ii0")]
