@@ -18,7 +18,7 @@ Bot: Hello, What can I help you?
 
 Bot: 
 	LINK: {{link}} AAVE: {{aave}} BTC: {{btc}}
-	ETH: {{eth}} MATIC: {{usdc}} APE: {{ape}}
+	ETH: {{eth}} MATIC: {{matic}} APE: {{ape}}
 => END!
 	
 ~ token_sent
