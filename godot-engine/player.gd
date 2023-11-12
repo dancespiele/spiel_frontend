@@ -55,5 +55,5 @@ func _unhandled_input(_event):
 		if collision_object:
 			var collider = collision_object.get_collider() as CharacterBody3D
 
-			if collider and Input.is_action_pressed("dialogue") and collider.is_in_group("bot"):
+			if collider and collider.is_in_group("bot"):
 				DialogueManager.show_example_dialogue_balloon(resource, "main_menu")

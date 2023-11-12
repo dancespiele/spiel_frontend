@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dbdf8kk8emcm7"]
+[gd_scene load_steps=12 format=3 uid="uid://dbdf8kk8emcm7"]
 
 [ext_resource type="PackedScene" uid="uid://davc27j3u2ih" path="res://assets/ground.glb" id="1_rk2ka"]
 [ext_resource type="PackedScene" uid="uid://bmvtva1rv30qu" path="res://assets/building.glb" id="2_ax0mo"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_qhvjt"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="6_pwic2"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_73gtx"]
+[ext_resource type="PackedScene" uid="uid://cmxkfhdb77vbg" path="res://user_interface.tscn" id="8_bh1f1"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt64u"]
 
@@ -71,3 +72,5 @@ transform = Transform3D(0.00136133, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.001361
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 script = ExtResource("7_73gtx")
+
+[node name="UserInterface" parent="." instance=ExtResource("8_bh1f1")]

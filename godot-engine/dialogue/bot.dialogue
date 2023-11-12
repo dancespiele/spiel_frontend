@@ -2,7 +2,8 @@
 
 Bot: Hello, What can I help you?
 - List token prices from Avalanche
-	do ask_token_price_list()
+	do ask_for_price_list()
+	do wait(2.0)
 	=> list_token_prices
 - Send token to other account to polygon
 	do ask_for_address()
@@ -17,8 +18,8 @@ Bot: Hello, What can I help you?
 ~ list_token_prices
 
 Bot: 
-	LINK: {{link}} AAVE: {{aave}} BTC: {{btc}}
-	ETH: {{eth}} MATIC: {{matic}} APE: {{ape}}
+	LINK: {{prices.link}} AAVE: {{prices.aave}} BTC: {{prices.btc}}
+	ETH: {{prices.eth}} MATIC: {{prices.matic}} APE: {{prices.ape}}
 => END!
 	
 ~ token_sent
