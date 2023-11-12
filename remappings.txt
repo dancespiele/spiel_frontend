@@ -1,9 +1,9 @@
-@chainlink-testing/=lib/foundry-chainlink-toolkit/lib/chainlink-testing-framework/contracts/ethereum/
-@chainlink/=lib/foundry-chainlink-toolkit/lib/chainlink-brownie-contracts/contracts/src/
-@openzeppelin/=lib/foundry-chainlink-toolkit/lib/openzeppelin-contracts/
-chainlink-brownie-contracts/=lib/foundry-chainlink-toolkit/lib/chainlink-brownie-contracts/
-chainlink-testing-framework/=lib/foundry-chainlink-toolkit/lib/chainlink-testing-framework/contracts/
+@chainlink/contracts-ccip/=lib/ccip-starter-kit-foundry/node_modules/@chainlink/contracts-ccip/
+@chainlink/contracts/=lib/ccip-starter-kit-foundry/node_modules/@chainlink/contracts/
+@openzeppelin/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/
+ccip-starter-kit-foundry/=lib/ccip-starter-kit-foundry/
 ds-test/=lib/forge-std/lib/ds-test/src/
+erc4626-tests/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/lib/erc4626-tests/
 forge-std/=lib/forge-std/src/
-foundry-chainlink-toolkit/=lib/foundry-chainlink-toolkit/
-openzeppelin-contracts/=lib/foundry-chainlink-toolkit/lib/openzeppelin-contracts/
+openzeppelin-contracts/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/
+openzeppelin/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/contracts/
