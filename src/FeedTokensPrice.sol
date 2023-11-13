@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "@chainlink/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/v0.8/interfaces/AggregatorV3Interface.sol";
 
 /**
  * Get the prices of tokens added in the contract
@@ -21,11 +21,17 @@ contract FeedTokensPrice {
         s_owner = msg.sender;
     }
 
+    /**
+     * Only owner can execute contract method
+     */
     modifier onlyOwner() {
         require(msg.sender == s_owner, "Only owner can execute this contract method");
         _;
     }
 
+    /**
+     * get price of supported tokens
+     */
     function getPriceList() public view returns (int256[] memory) {
         int256[] memory prices = new int256[](address_list.length);
         for (uint256 i = 0; i < address_list.length; i++) {
@@ -47,6 +53,10 @@ contract FeedTokensPrice {
         return prices;
     }
 
+    /**
+     * Add token supported
+     * @param token token address
+     */
     function addContractPrice(address token) external onlyOwner {
         address_list.push(token);
     }
@@ -64,6 +74,10 @@ contract FeedTokensPrice {
         }
     }
 
+    /**
+     * Remove token address
+     * @param token token address
+     */
     function getAggregator(address token) private pure returns (AggregatorV3Interface) {
         return AggregatorV3Interface(token);
     }

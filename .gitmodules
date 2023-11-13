@@ -4,6 +4,3 @@
 [submodule "lib/ccip-starter-kit-foundry"]
 	path = lib/ccip-starter-kit-foundry
 	url = https://github.com/smartcontractkit/ccip-starter-kit-foundry
-[submodule "lib/foundry-chainlink-toolkit"]
-	path = lib/foundry-chainlink-toolkit
-	url = https://github.com/smartcontractkit/foundry-chainlink-toolkit
