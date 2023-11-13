@@ -40,23 +40,17 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
     uint256 private s_lastReceivedTokenAmount;
     string private s_lastReceivedText;
     address private platform;
-    address private linkToken;
-    address private nativeToken;
 
     mapping(uint64 => bool) public allowListedDestinationChains;
 
     mapping(uint64 => bool) public allowListedSourceChains;
 
-    mapping(address => bool) public allowListedSenders;
-
     IERC20 private s_linkToken;
 
-    IERC20 private senderToken;
+    IERC20 private w_nativeToken;
 
-    constructor(address _router, address _link, address _nativeToken, address _platform) CCIPReceiver(_router) {
+    constructor(address _router, address _link, address _platform) CCIPReceiver(_router) {
         s_linkToken = IERC20(_link);
-        linkToken = _link;
-        nativeToken = _nativeToken;
         platform = _platform;
     }
 
@@ -67,7 +61,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         _;
     }
 
-    modifier onlyAllowListed(uint64 _sourceChainSelector) {
+    modifier onlyAllowListedSourceChain(uint64 _sourceChainSelector) {
         if (!allowListedSourceChains[_sourceChainSelector]) {
             revert SourceChainNotAllowed(_sourceChainSelector);
         }
@@ -105,11 +99,11 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         uint64 _destinationChainSelector,
         address _receiver,
         string calldata _text,
+        address _token_fees,
         address _token,
         uint256 _amount
     ) public view onlyAllowListedDestionationChain(_destinationChainSelector) returns (uint256) {
-        Client.EVM2AnyMessage memory evm2AnyMessage =
-            _buildCCIPMessage(_receiver, _text, _token, _amount, address(s_linkToken));
+        Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(_receiver, _text, _token, _amount, _token_fees);
 
         IRouterClient router = IRouterClient(this.getRouter());
 
@@ -148,9 +142,11 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
 
         IERC20(_token).approve(address(router), _amount);
 
-        messageId = router.ccipSend(_destinationChainSelector, evm2AnyMessage);
+        s_linkToken.transferFrom(msg.sender, platform, fees);
+        s_linkToken.transferFrom(msg.sender, address(this), fees);
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        payPlatformFee(fees, linkToken, _token, _amount);
+        messageId = router.ccipSend(_destinationChainSelector, evm2AnyMessage);
 
         emit MessageSent(
             messageId, _destinationChainSelector, _receiver, _text, _token, _amount, address(s_linkToken), fees
@@ -165,7 +161,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         string calldata _text,
         address _token,
         uint256 _amount
-    ) external onlyAllowListedDestionationChain(_destinationChainSelector) returns (bytes32 messageId) {
+    ) external payable onlyAllowListedDestionationChain(_destinationChainSelector) returns (bytes32 messageId) {
         Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(_receiver, _text, _token, _amount, address(0));
 
         IRouterClient router = IRouterClient(this.getRouter());
@@ -176,23 +172,23 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
             revert NotEnoughBalance(address(this).balance, fees);
         }
 
-        if (fees * 2 > msg.sender.balance) {
-            revert NotEnoughBalance(msg.sender.balance, fees * 2);
+        if (fees * 2 > w_nativeToken.balanceOf(msg.sender)) {
+            revert NotEnoughBalance(w_nativeToken.balanceOf(msg.sender), fees * 2);
         }
 
         if (_amount > IERC20(_token).balanceOf(msg.sender)) {
             revert NotEnoughBalance(IERC20(_token).balanceOf(msg.sender), _amount);
         }
 
-        IERC20(nativeToken).approve(address(router), _amount);
-
         IERC20(_token).approve(address(router), _amount);
+
+        IERC20(msg.sender).transferFrom(msg.sender, platform, fees);
+        IERC20(msg.sender).transferFrom(msg.sender, address(this), fees);
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
         messageId = router.ccipSend{value: fees}(_destinationChainSelector, evm2AnyMessage);
 
-        payPlatformFee(fees, nativeToken, _token, _amount);
-
-        emit MessageSent(messageId, _destinationChainSelector, _receiver, _text, nativeToken, _amount, address(0), fees);
+        emit MessageSent(messageId, _destinationChainSelector, _receiver, _text, _token, _amount, address(0), fees);
 
         return messageId;
     }
@@ -208,7 +204,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
     function _ccipReceive(Client.Any2EVMMessage memory any2EvmMessage)
         internal
         override
-        onlyAllowListed(any2EvmMessage.sourceChainSelector)
+        onlyAllowListedSourceChain(any2EvmMessage.sourceChainSelector)
     {
         s_lastReceivedMessageId = any2EvmMessage.messageId;
         s_lastReceivedText = abi.decode(any2EvmMessage.data, (string));
@@ -243,11 +239,5 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         if (amount == 0) revert NothingToWithdraw();
 
         IERC20(_token).transfer(_beneficiary, amount);
-    }
-
-    function payPlatformFee(uint256 fees, address token_fees, address token_to_transfer, uint256 amount) private {
-        IERC20(token_fees).transfer(platform, fees);
-        IERC20(token_fees).transfer(address(this), fees);
-        IERC20(token_to_transfer).transfer(address(this), amount);
     }
 }
