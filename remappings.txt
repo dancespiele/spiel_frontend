@@ -8,3 +8,4 @@ erc4626-tests/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/lib/erc46
 forge-std/=lib/forge-std/src/
 openzeppelin-contracts/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/
 openzeppelin/=lib/ccip-starter-kit-foundry/lib/openzeppelin-contracts/contracts/
+wrapped-assets/=lib/wrapped-assets/

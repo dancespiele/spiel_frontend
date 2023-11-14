@@ -6,6 +6,7 @@ import {OwnerIsCreator} from "@chainlink/contracts-ccip/v0.8/shared/access/Owner
 import {Client} from "@chainlink/contracts-ccip/v0.8/ccip/libraries/Client.sol";
 import {CCIPReceiver} from "@chainlink/contracts-ccip/v0.8/ccip/applications/CCIPReceiver.sol";
 import {IERC20} from "@chainlink/contracts-ccip/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
+import {WAVAX} from "wrapped-assets/WAVAX.sol";
 
 contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
     error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees);
@@ -47,10 +48,11 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
 
     IERC20 private s_linkToken;
 
-    IERC20 private w_nativeToken;
+    WAVAX private w_nativeToken;
 
-    constructor(address _router, address _link, address _platform) CCIPReceiver(_router) {
+    constructor(address _router, address _link, address _nativeToken, address _platform) CCIPReceiver(_router) {
         s_linkToken = IERC20(_link);
+        w_nativeToken = WAVAX(payable(_nativeToken));
         platform = _platform;
     }
 
@@ -130,8 +132,12 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
             revert NotEnoughBalance(s_linkToken.balanceOf(address(this)), fees);
         }
 
-        if (fees * 2 > s_linkToken.balanceOf(msg.sender)) {
-            revert NotEnoughBalance(s_linkToken.balanceOf(msg.sender), fees * 2);
+        if (_amount > IERC20(_token).balanceOf(address(this))) {
+            revert NotEnoughBalance(IERC20(_token).balanceOf(address(this)), _amount);
+        }
+
+        if (fees + (fees / 10) > s_linkToken.balanceOf(msg.sender)) {
+            revert NotEnoughBalance(s_linkToken.balanceOf(msg.sender), fees + (fees / 10));
         }
 
         if (_amount > IERC20(_token).balanceOf(msg.sender)) {
@@ -142,7 +148,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
 
         IERC20(_token).approve(address(router), _amount);
 
-        s_linkToken.transferFrom(msg.sender, platform, fees);
+        s_linkToken.transferFrom(msg.sender, platform, fees / 10);
         s_linkToken.transferFrom(msg.sender, address(this), fees);
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
@@ -161,7 +167,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         string calldata _text,
         address _token,
         uint256 _amount
-    ) external payable onlyAllowListedDestionationChain(_destinationChainSelector) returns (bytes32 messageId) {
+    ) external onlyAllowListedDestionationChain(_destinationChainSelector) returns (bytes32 messageId) {
         Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(_receiver, _text, _token, _amount, address(0));
 
         IRouterClient router = IRouterClient(this.getRouter());
@@ -172,8 +178,12 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
             revert NotEnoughBalance(address(this).balance, fees);
         }
 
-        if (fees * 2 > w_nativeToken.balanceOf(msg.sender)) {
-            revert NotEnoughBalance(w_nativeToken.balanceOf(msg.sender), fees * 2);
+        if (_amount > IERC20(_token).balanceOf(address(this))) {
+            revert NotEnoughBalance(IERC20(_token).balanceOf(address(this)), _amount);
+        }
+
+        if (fees + (fees / 10) > w_nativeToken.balanceOf(msg.sender)) {
+            revert NotEnoughBalance(w_nativeToken.balanceOf(msg.sender), fees + (fees / 10));
         }
 
         if (_amount > IERC20(_token).balanceOf(msg.sender)) {
@@ -182,8 +192,9 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
 
         IERC20(_token).approve(address(router), _amount);
 
-        IERC20(msg.sender).transferFrom(msg.sender, platform, fees);
-        IERC20(msg.sender).transferFrom(msg.sender, address(this), fees);
+        w_nativeToken.transferFrom(msg.sender, platform, fees / 10);
+        w_nativeToken.transferFrom(msg.sender, address(this), fees);
+        w_nativeToken.withdraw(fees);
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
         messageId = router.ccipSend{value: fees}(_destinationChainSelector, evm2AnyMessage);
