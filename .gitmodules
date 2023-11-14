@@ -4,9 +4,3 @@
 [submodule "lib/ccip-starter-kit-foundry"]
 	path = lib/ccip-starter-kit-foundry
 	url = https://github.com/smartcontractkit/ccip-starter-kit-foundry
-[submodule "lib/v2-core"]
-	path = lib/v2-core
-	url = https://github.com/uniswap/v2-core
-[submodule "lib/v3-periphery"]
-	path = lib/v3-periphery
-	url = https://github.com/uniswap/v3-periphery
