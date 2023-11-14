@@ -4,3 +4,6 @@
 [submodule "lib/ccip-starter-kit-foundry"]
 	path = lib/ccip-starter-kit-foundry
 	url = https://github.com/smartcontractkit/ccip-starter-kit-foundry
+[submodule "lib/wrapped-assets"]
+	path = lib/wrapped-assets
+	url = https://github.com/ava-labs/wrapped-assets
