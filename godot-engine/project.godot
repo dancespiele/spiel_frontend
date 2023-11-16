@@ -64,7 +64,7 @@ dialogue={
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://dialogue/bot.dialogue")
+locale/translations_pot_files=PackedStringArray("res://dialogue/bot_service.dialogue", "res://dialogue/transaction_sent.dialogue")
 
 [layer_names]
 

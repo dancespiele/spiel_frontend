@@ -1,16 +1,14 @@
 extends AcceptDialog
 
-@onready var address_edit: LineEdit = $AddressEdit
+@onready var input_text: LineEdit = $AddressEdit
+
 
 func _ready() -> void:
-	register_text_enter(address_edit)
+	register_text_enter(input_text)
 
 func _on_about_to_popup() -> void:
-	address_edit.text = "Address"
-	address_edit.call_deferred("grab_focus")
-	address_edit.call_deferred("select_all")
-
-
+	input_text.call_deferred("grab_focus")
+	input_text.call_deferred("select_all")
 
 func _on_close_requested() -> void:
 	emit_signal("confirmed")

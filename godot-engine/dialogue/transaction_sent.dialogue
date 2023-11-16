@@ -1,0 +1,4 @@
+~ transaction_sent
+
+Blockchain service: The transaction {hash} was sent 
+=> END!

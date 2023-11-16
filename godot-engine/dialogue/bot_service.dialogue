@@ -1,0 +1,61 @@
+~ main_menu
+
+Blockchain service: Hello, What can I help you?
+- List token prices from Avalanche
+	do ask_for_price_list()
+	do wait(2.0)
+	=> list_token_prices
+- Send token to other account to polygon
+	=> require_address
+- Play Destroy the ball
+	do play_destroy_the_ball()
+	=> END!
+- Nothing => END
+
+~ list_token_prices
+
+Blockchain service: 
+	LINK: {{prices.link}} AAVE: {{prices.aave}} BTC: {{prices.btc}}
+	ETH: {{prices.eth}} MATIC: {{prices.matic}} APE: {{prices.ape}}
+=> END!
+
+~ require_address
+
+Blockchain service: Which address do you want to send?
+do ask_for_address()
+if is_address
+	Blockchain service: Address {{address_input}}!
+	=> require_token_amount
+else
+	Blockchain service: The address input is empty or not valid, do you want to introduce again?
+	- Yes
+		=> require_address
+	- No
+		=> cancel_operation
+	
+~ require_token_amount
+
+Blockchain service: How many tokens do you want to send?
+do ask_for_amount()
+if is_valid_amount
+	Blockchain service: Amount {{amount_input}}!
+	do calc_fees()
+	do wait(2.0)
+	Blockchain service: You will pay this fees for the transaction (gas not included): {{fees}} AVAX
+	Blockchain service: You want to continue
+	- Yes
+		do send_tokens()
+		=> END!
+	- No
+		=> cancel_operation
+else
+	Blockchain service: The amount input is empty or not valid, do you want to introduce again?
+	- Yes
+		=> require_token_amount
+	- No
+		=> cancel_operation
+
+~ cancel_operation
+
+Blockchain service: I'm here if you need my help again
+=> END!

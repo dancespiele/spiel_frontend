@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_11"
+type="Resource"
+uid="uid://dhjw86acqn5nv"
+path="res://.godot/imported/transaction_sent.dialogue-a1275011f73f9668d99aabcdf95ff8ba.tres"
+
+[deps]
+
+source_file="res://dialogue/transaction_sent.dialogue"
+dest_files=["res://.godot/imported/transaction_sent.dialogue-a1275011f73f9668d99aabcdf95ff8ba.tres"]
+
+[params]
+
+defaults=true

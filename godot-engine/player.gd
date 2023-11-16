@@ -47,7 +47,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 func _unhandled_input(_event):
-	var resource = load("res://dialogue/bot.dialogue") as DialogueResource
+	var resource = load("res://dialogue/bot_service.dialogue") as DialogueResource
 
 	for index in range(0, get_slide_collision_count()):
 		var collision_object = get_slide_collision(index)

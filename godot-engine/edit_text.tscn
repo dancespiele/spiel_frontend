@@ -3,18 +3,18 @@
 [ext_resource type="Script" path="res://edit_text.gd" id="1_oc5fh"]
 
 [node name="EditText" type="AcceptDialog"]
-title = "Write your wallet address:"
+title = ""
 position = Vector2i(0, 36)
 size = Vector2i(400, 100)
 visible = true
-ok_button_text = "Submit address"
+ok_button_text = ""
 script = ExtResource("1_oc5fh")
 
 [node name="AddressEdit" type="LineEdit" parent="."]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 392.0
-offset_bottom = 51.0
+offset_bottom = 74.0
 
 [connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]

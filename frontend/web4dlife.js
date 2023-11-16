@@ -7842,6 +7842,10 @@ function _emscripten_glVertexAttribDivisor(index, divisor) {
  GLctx["vertexAttribDivisor"](index, divisor);
 }
 
+function _emscripten_glVertexAttribI4ui(x0, x1, x2, x3, x4) {
+ GLctx["vertexAttribI4ui"](x0, x1, x2, x3, x4);
+}
+
 function _emscripten_glVertexAttribIPointer(index, size, type, stride, ptr) {
  GLctx["vertexAttribIPointer"](index, size, type, stride, ptr);
 }
@@ -11165,7 +11169,9 @@ function _godot_js_wrapper_create_cb(p_ref, p_func) {
   }
   GodotJSWrapper.cb_ret = null;
   const args = Array.from(arguments);
-  func(p_ref, GodotJSWrapper.get_proxied(args), args.length);
+  const argsProxy = new GodotJSWrapper.MyProxy(args);
+  func(p_ref, argsProxy.get_id(), args.length);
+  argsProxy.unref();
   const ret = GodotJSWrapper.cb_ret;
   GodotJSWrapper.cb_ret = null;
   return ret;
@@ -12878,6 +12884,7 @@ var asmLibraryArg = {
  "emscripten_glUseProgram": _emscripten_glUseProgram,
  "emscripten_glVertexAttrib4f": _emscripten_glVertexAttrib4f,
  "emscripten_glVertexAttribDivisor": _emscripten_glVertexAttribDivisor,
+ "emscripten_glVertexAttribI4ui": _emscripten_glVertexAttribI4ui,
  "emscripten_glVertexAttribIPointer": _emscripten_glVertexAttribIPointer,
  "emscripten_glVertexAttribPointer": _emscripten_glVertexAttribPointer,
  "emscripten_glViewport": _emscripten_glViewport,

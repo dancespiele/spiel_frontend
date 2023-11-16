@@ -111,7 +111,7 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
 
         uint256 fees = router.getFee(_destinationChainSelector, evm2AnyMessage);
 
-        return fees * 2;
+        return fees + (fees / 10);
     }
 
     function sendTokenPayLink(
