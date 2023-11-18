@@ -223,4 +223,41 @@ contract CCIPSendTokensTest is Test {
 
         assertTrue(revertCCIPSendTokens, "NotEnoughBalance(0, 33422235091170960 [3.342e16])");
     }
+
+    function testWrapAvax() public {
+        vm.startPrank(user);
+        vm.deal(user, 5 ether);
+
+        uint256 previous_avax_balance = user.balance;
+        uint256 previous_wavax_balance = IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).balanceOf(user);
+
+        ccipSendTokens.wrapAvaxToken{value: 1 ether}();
+
+        uint256 current_avax_balance = user.balance;
+        uint256 current_wavax_balance = IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).balanceOf(user);
+
+        vm.stopPrank();
+
+        assertTrue(current_wavax_balance > previous_wavax_balance);
+        assertTrue(current_avax_balance < previous_avax_balance);
+    }
+
+    function textUnwrapAvax() public {
+        vm.startPrank(user);
+
+        deal(0xd00ae08403B9bbb9124bB305C09058E32C39A48c, user, 5 ether);
+
+        uint256 previous_avax_balance = user.balance;
+        uint256 previous_wavax_balance = IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).balanceOf(user);
+
+        ccipSendTokens.unwrapAvaxToken(1 ether);
+
+        uint256 current_avax_balance = user.balance;
+        uint256 current_wavax_balance = IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).balanceOf(user);
+
+        vm.stopPrank();
+
+        assertTrue(current_avax_balance > previous_avax_balance);
+        assertTrue(current_wavax_balance < previous_wavax_balance);
+    }
 }

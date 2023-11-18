@@ -97,6 +97,23 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         });
     }
 
+    function wrapAvaxToken() external payable {
+        w_nativeToken.deposit{value: msg.value}();
+
+        w_nativeToken.transfer(msg.sender, msg.value);
+    }
+
+    function unwrapAvaxToken(uint256 amount) external {
+        if (amount > w_nativeToken.balanceOf(msg.sender)) {
+            revert NotEnoughBalance(w_nativeToken.balanceOf(msg.sender), amount);
+        }
+
+        w_nativeToken.transferFrom(msg.sender, address(this), amount);
+        w_nativeToken.withdraw(amount);
+        address payable owner = payable(address(this));
+        owner.transfer(amount);
+    }
+
     function getFeePrediction(
         uint64 _destinationChainSelector,
         address _receiver,
