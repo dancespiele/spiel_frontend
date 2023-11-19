@@ -6,11 +6,11 @@ var jump_impulse = 20
 var target_velocity= Vector3.ZERO
 var fall_acceleration= 75.0
 @onready var dialogue_bot: DialogueLabel = $DialogueBot
-var address: String 
+@onready var actionable_finder: Area3D = $Direction/ActionableFinder
+@onready var resource = load("res://dialogue/bot_service.dialogue") as DialogueResource
+var address: String
 
-const COLORS = {
-	"Bot": "ff5741",
-}
+const Balloon = preload("res://dialogue/balloon.tscn")
 
 func _physics_process(delta):
 	var pivot = get_node("Pivot") as Node3D
@@ -47,13 +47,12 @@ func _physics_process(delta):
 	move_and_slide()
 
 func _unhandled_input(_event):
-	var resource = load("res://dialogue/bot_service.dialogue") as DialogueResource
+	var actionable = actionable_finder.get_overlapping_areas()
 
-	for index in range(0, get_slide_collision_count()):
-		var collision_object = get_slide_collision(index)
+	if actionable.size() > 0 and Input.is_action_pressed("dialogue"):
+		create_balloon()
 
-		if collision_object:
-			var collider = collision_object.get_collider() as CharacterBody3D
-
-			if collider and collider.is_in_group("bot"):
-				DialogueManager.show_example_dialogue_balloon(resource, "main_menu")
+func create_balloon():
+	var balloon = Balloon.instantiate()
+	get_tree().current_scene.add_child(balloon)
+	balloon.start(resource, "main_menu")

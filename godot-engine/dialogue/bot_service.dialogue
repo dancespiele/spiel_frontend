@@ -8,7 +8,8 @@ Blockchain service: Hello, What can I help you?
 - Send token to other account to polygon
 	=> require_address
 - Play Destroy the ball
-	do play_destroy_the_ball()
+	Blockchain service: to start the game press enter
+	do play_destroy_the_box()
 	=> END!
 - Nothing => END
 

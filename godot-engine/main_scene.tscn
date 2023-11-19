@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://blvmxsakfuslw"]
+[gd_scene load_steps=7 format=3 uid="uid://blvmxsakfuslw"]
 
 [ext_resource type="Script" path="res://main_scene.gd" id="1_037o4"]
 [ext_resource type="PackedScene" uid="uid://dbdf8kk8emcm7" path="res://world.tscn" id="1_323np"]
+[ext_resource type="Script" path="res://switch.gd" id="2_5ntxe"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fxd2o"]
 sky_top_color = Color(0.341176, 0.454902, 0.992157, 1)
@@ -21,10 +22,13 @@ ambient_light_sky_contribution = 0.65
 ambient_light_energy = 3.0
 adjustment_enabled = true
 
-[node name="Node3D" type="Node3D"]
+[node name="MainScene" type="Node3D"]
 script = ExtResource("1_037o4")
-
-[node name="World" parent="." instance=ExtResource("1_323np")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_775p6")
+
+[node name="Switch" type="Node3D" parent="."]
+script = ExtResource("2_5ntxe")
+
+[node name="World" parent="Switch" instance=ExtResource("1_323np")]

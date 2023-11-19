@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://btatvnsrlckhu"]
+
+[ext_resource type="Script" path="res://packtingo/ball.gd" id="1_vlf5x"]
+[ext_resource type="PackedScene" uid="uid://e4q1wphr0upr" path="res://packtingo/ball.glb" id="1_xmbas"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ixxs1"]
+
+[node name="Ball" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_vlf5x")
+
+[node name="ball" parent="." instance=ExtResource("1_xmbas")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+shape = SubResource("SphereShape3D_ixxs1")
+
+[node name="VisibleNotifier" type="VisibleOnScreenNotifier3D" parent="."]
+
+[connection signal="screen_exited" from="VisibleNotifier" to="." method="_on_visible_notifier_screen_exited"]

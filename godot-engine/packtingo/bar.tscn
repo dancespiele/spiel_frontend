@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqv6tbfkri2g6"]
+
+[ext_resource type="Script" path="res://packtingo/bar.gd" id="1_5uo3n"]
+[ext_resource type="PackedScene" uid="uid://dqiyl7moy0x4w" path="res://packtingo/bar.glb" id="2_e8im7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ks3qn"]
+
+[node name="Bar" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_5uo3n")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 1.1, 0, 0, 0)
+shape = SubResource("BoxShape3D_ks3qn")
+
+[node name="bar" parent="." instance=ExtResource("2_e8im7")]

@@ -1,14 +1,20 @@
 extends Node
 
 var get_list_prices_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_list_prices_callback")))
-var get_signer_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signer_callback")))
+var get_signer_send_tokens_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signer_callback")))
+var get_play_destroy_the_box_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_play_destroy_the_box_callback")));
 var get_address_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_address_callback")))
 var get_allowance_wavax_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_allowance_wavax_callback")))
 var get_allowance_game_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_allowance_game_token_callback")))
 var get_wait_wavax_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_wavax_token_tx_callback")))
 var get_wait_game_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_game_token_tx_callback")))
 var get_wait_send_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_send_token_tx_callback")))
+var get_wait_link_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_link_tx_callback")))
+var get_wait_roll_dice_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_roll_dice_tx_callback")))
+var get_box_to_destroy_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_box_to_destroy_callback")));
 var get_approve_game_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_approve_game_token_callback")))
+var get_approve_link_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_approve_link_token_callback")))
+var get_approve_roll_dice_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_approve_roll_dice_callback")))
 var get_send_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_send_token_callback")))
 var get_call_fees_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_call_fees_callback")))
 var get_tx_id_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_tx_id_callback")))
@@ -26,11 +32,13 @@ var polygon_id = "12532609583862916517"
 var wavax_token = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var send_token_address: String = "0x94409A2D4fdc713daC8fc911B89a9Fe0A6a7eC80"
+var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
+var destroy_box_address: String = "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
+var fee_destroy_ball= "80000000000000000"
 var send_tokens_contract
 var amount_parsed
 var signer
 var wallet_address
-var hash
 
 var prices = {
   "link": "",
@@ -40,6 +48,10 @@ var prices = {
   "matic": "",
   "ape": "",
 }
+
+const Balloon = preload("res://dialogue/balloon.tscn")
+
+signal started_packtingo
 
 func ask_for_price_list():
   var price_list_contract = window.price_list_contract
@@ -100,9 +112,9 @@ func get_call_fees_callback(args):
   fees = window.Number(ethers.formatUnits(fees_wei, 18))
 
 func send_tokens():
-  window.provider.getSigner().then(get_signer_callback_ref)
+  window.provider.getSigner().then(get_signer_send_tokens_callback_ref)
   
-func get_signer_callback(args):
+func get_signer_send_tokens_callback(args):
   if args[0]:
     signer = args[0]
     signer.getAddress().then(get_address_callback_ref)
@@ -145,6 +157,37 @@ func get_wait_send_token_tx_callback(args):
   args[0].wait().then(get_tx_id_callback_ref)
 
 func get_tx_id_callback(args):
-  hash = args[0]
+  console.log(args[0])
+  var balloon: Node = Balloon.instantiate()
   var transaction_sent_dialogue = load("res://dialogue/transaction_sent.dialogue") as DialogueResource
-  DialogueManager.show_example_dialogue_balloon(transaction_sent_dialogue, "transaction_sent")
+  get_tree().current_scene.add_child(balloon)
+  balloon.start(transaction_sent_dialogue, "transaction_sent")
+
+func play_destroy_the_box():
+  window.provider.getSigner().then(get_play_destroy_the_box_callback_ref)
+
+func get_play_destroy_the_box_callback(args):
+  if args[0]:
+    signer = args[0]
+    window.link_token_contract.connect(signer).approve(destroy_box_address, fee_destroy_ball).then(get_wait_link_tx_callback_ref)
+
+func get_wait_link_tx_callback(args):
+  args[0].wait().then(get_approve_link_token_callback_ref)
+  
+func get_approve_link_token_callback(_args):
+  window.destroy_box_contract.connect(signer).rollDice().then(get_wait_roll_dice_tx_callback_ref)
+
+func get_wait_roll_dice_tx_callback(args):
+  args[0].wait().then(get_approve_roll_dice_callback_ref)
+
+func get_approve_roll_dice_callback(args):
+  console.log(args[0])
+  await get_tree().create_timer(30).timeout
+  window.destroy_box_contract.connect(signer).boxToDestroy().then(get_box_to_destroy_callback_ref)
+
+func get_box_to_destroy_callback(args):
+  window.box_to_destroy = window.Number(args[0])
+  start_packtingo()
+
+func start_packtingo():
+  started_packtingo.emit()

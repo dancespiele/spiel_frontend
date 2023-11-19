@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://ckjsek2wkpoyo"]
+
+[node name="LoadingScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = 193.0
+offset_top = 222.0
+offset_right = 981.0
+offset_bottom = 285.0
