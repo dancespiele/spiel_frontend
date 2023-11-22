@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbu2all6yoh82"]
+
+[ext_resource type="Script" path="res://packtingo/box_to_destroy.gd" id="1_3ntvc"]
+[ext_resource type="PackedScene" uid="uid://jl26f4vtqj0g" path="res://packtingo/box_2.glb" id="1_57kbh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3mog8"]
+
+[node name="BoxToDestroy" type="StaticBody3D" groups=["box"]]
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_3ntvc")
+
+[node name="box_2" parent="." instance=ExtResource("1_57kbh")]
+transform = Transform3D(0.22, 0, 0, 0, 0.22, 0, 0, 0, 0.22, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.48, 0, 0, 0, 0.48, 0, 0, 0, 0.48, 0, 0, 0)
+shape = SubResource("BoxShape3D_3mog8")

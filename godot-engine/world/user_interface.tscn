@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo714iq5qna36"]
+
+[ext_resource type="Script" path="res://world/user_interface.gd" id="1_6hknn"]
+
+[node name="UserInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_6hknn")
+
+[node name="WalletConnect" type="Button" parent="."]
+layout_mode = 0
+offset_left = 903.0
+offset_top = 35.0
+offset_right = 1081.0
+offset_bottom = 71.0
+text = "Connect Wallet"
+
+[connection signal="pressed" from="WalletConnect" to="." method="_on_wallet_connect_pressed"]

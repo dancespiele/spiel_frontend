@@ -1,6 +1,8 @@
 extends Label
 
-var score = 0
+var score = 4
+
+signal game_over
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -12,5 +14,8 @@ func _process(_delta):
 	pass
 
 func _on_box_destroyed():
-	score += 10
+	score -= 1   
 	text = "Score: %s" % score
+
+	if score == 0:
+		game_over.emit()

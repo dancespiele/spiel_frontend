@@ -1,45 +1,59 @@
 [gd_scene load_steps=5 format=3 uid="uid://bjoboqmbcapei"]
 
-[ext_resource type="PackedScene" uid="uid://syxsmf5rcru1" path="res://packtingo/side-wall.glb" id="1_gnpwl"]
-[ext_resource type="PackedScene" uid="uid://c8om6nr8k64cl" path="res://packtingo/front-wall.glb" id="2_cx8cs"]
+[ext_resource type="PackedScene" uid="uid://oplikkhepa34" path="res://packtingo/wall.glb" id="1_8idhf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_njuo3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6a4fn"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_w31v5"]
+
 [node name="Wall" type="Node3D"]
 
-[node name="wall-cont-front" type="StaticBody3D" parent="."]
+[node name="wall-front-cont" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.146, 0.037, -11.955)
 collision_layer = 4
 collision_mask = 4
 
-[node name="wall-front" parent="wall-cont-front" instance=ExtResource("2_cx8cs")]
-transform = Transform3D(0.00118682, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.00118682, -0.748945, 0, 0.548962)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="wall-cont-front"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wall-front-cont"]
 transform = Transform3D(21.5, 0, 0, 0, 4, 0, 0, 0, 0.5, 0, 0, 0)
 shape = SubResource("BoxShape3D_njuo3")
 
+[node name="wall" parent="wall-front-cont" instance=ExtResource("1_8idhf")]
+transform = Transform3D(-0.00431088, 0, 0.909992, 0, 1, 0, -0.999991, 0, -0.0039229, 0.472613, 0, -1.83738)
+
 [node name="wall-left-cont" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0410647, 0.0932546, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.14, -0.0410647, 0.0932546, 1.73343)
 collision_layer = 4
 collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="wall-left-cont"]
-transform = Transform3D(0.5, 0, 0, 0, 4, 0, 0, 0, 23.5, -2.74495, -9.31323e-10, -0.451165)
+transform = Transform3D(0.5, 0, 0, 0, 4, 0, 0, 0, 23.5, -2.74495, 0, -0.451165)
 shape = SubResource("BoxShape3D_6a4fn")
 
-[node name="wall-left" parent="wall-left-cont" instance=ExtResource("1_gnpwl")]
-transform = Transform3D(1, 0, 0, 0, 0.961991, 0, 0, 0, 1, -0.932509, -0.0058136, 0.152734)
+[node name="wall" parent="wall-left-cont" instance=ExtResource("1_8idhf")]
+transform = Transform3D(0.909994, 0, 0.00348053, 0, 1, 0, -0.00316728, 0, 0.999994, -1.06881, -0.0963702, 0.101636)
 
 [node name="wall-right-cont" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.944, 0, 0.214)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.14, 20.944, 0, 1.76318)
 collision_layer = 4
 collision_mask = 4
-
-[node name="wall-right" parent="wall-right-cont" instance=ExtResource("1_gnpwl")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="wall-right-cont"]
 transform = Transform3D(0.5, 0, 0, 0, 4, 0, 0, 0, 23.5, -1.85824, 0, -0.634546)
 shape = SubResource("BoxShape3D_6a4fn")
+
+[node name="wall" parent="wall-right-cont" instance=ExtResource("1_8idhf")]
+transform = Transform3D(-0.909993, 0, -0.004074, 0, 1, 0, 0.00370734, 0, -0.999992, -3.43286, 0.037, -1.09663)
+
+[node name="wall-back-cont" type="StaticBody3D" parent="." groups=["back_wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.18737)
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wall-back-cont"]
+transform = Transform3D(21.5, 0, 0, 0, 4, 0, 0, 0, 0.5, 8.11062, 0, 11.0512)
+shape = SubResource("BoxShape3D_w31v5")
+
+[node name="wall" parent="wall-back-cont" instance=ExtResource("1_8idhf")]
+transform = Transform3D(-0.000181401, 0, 0.909999, 0, 1, 0, -0.910002, 0, 0.000559626, 8.68268, 0.037, 9.38215)

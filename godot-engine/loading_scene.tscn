@@ -1,10 +1,13 @@
-[gd_scene format=3 uid="uid://ckjsek2wkpoyo"]
+[gd_scene load_steps=2 format=3 uid="uid://ckjsek2wkpoyo"]
+
+[ext_resource type="Script" path="res://loading_scene.gd" id="1_wt36v"]
 
 [node name="LoadingScene" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("1_wt36v")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 layout_mode = 0

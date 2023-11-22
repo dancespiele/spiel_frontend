@@ -1,0 +1,76 @@
+[gd_scene load_steps=12 format=3 uid="uid://dbdf8kk8emcm7"]
+
+[ext_resource type="PackedScene" uid="uid://davc27j3u2ih" path="res://assets/ground.glb" id="1_edmev"]
+[ext_resource type="PackedScene" uid="uid://bmvtva1rv30qu" path="res://assets/building.glb" id="2_e622h"]
+[ext_resource type="PackedScene" uid="uid://b023x560ntcpf" path="res://world/bot.tscn" id="3_q1ogf"]
+[ext_resource type="PackedScene" uid="uid://cayj4noi66rh1" path="res://world/player.tscn" id="4_jnefc"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_p5x5b"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="6_hj064"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_7dtyo"]
+[ext_resource type="PackedScene" uid="uid://bo714iq5qna36" path="res://world/user_interface.tscn" id="8_qwdmi"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tt64u"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dgrcm"]
+
+[sub_resource type="Resource" id="Resource_yn4se"]
+script = ExtResource("6_hj064")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+fov = 75.0
+
+[node name="World" type="Node3D"]
+
+[node name="GroundCollision" type="StaticBody3D" parent="."]
+
+[node name="ground" parent="GroundCollision" instance=ExtResource("1_edmev")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundCollision"]
+transform = Transform3D(820, 0, 0, 0, 10, 0, 0, 0, 820, 0, 0, 0)
+shape = SubResource("BoxShape3D_tt64u")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="building" parent="StaticBody3D" instance=ExtResource("2_e622h")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -19.1985, 21.4707, -18.6935)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(65, 0, 0, 0, 50, 0, 0, 0, 95, -18.7861, 30.0957, -18.6266)
+shape = SubResource("BoxShape3D_dgrcm")
+
+[node name="Bot" parent="." instance=ExtResource("3_q1ogf")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -60, 8.67576, -19)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.932136, -0.359613, 0.0424342, 0.102309, 0.149137, -0.98351, 0.347354, 0.921106, 0.175807, -262.793, 210.012, 0)
+light_color = Color(0.94902, 0.964706, 0.792157, 1)
+light_energy = 1.304
+light_indirect_energy = 0.999
+
+[node name="Player" parent="." instance=ExtResource("4_jnefc")]
+transform = Transform3D(0.00136133, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.00136133, -81.718, 8.60502, -5.5994)
+
+[node name="PhantomCamera3D" type="Node3D" parent="."]
+transform = Transform3D(0.00136133, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.00136133, -93.718, 11.605, -5.5994)
+script = ExtResource("5_p5x5b")
+priority_override = false
+priority = 0
+follow_mode = 2
+follow_target = NodePath("../Player")
+follow_parameters/target_offset = Vector3(-12, 3, 0)
+follow_parameters/damping = false
+look_at_mode = 1
+look_at_target = NodePath("../Player")
+tween_parameters = null
+tween_on_load = true
+inactive_update_mode = 0
+camera_3D_resource = SubResource("Resource_yn4se")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.00136133, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.00136133, -93.718, 11.605, -5.5994)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+script = ExtResource("7_7dtyo")
+
+[node name="UserInterface" parent="." instance=ExtResource("8_qwdmi")]

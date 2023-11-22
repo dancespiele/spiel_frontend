@@ -16,16 +16,16 @@ Blockchain service: Hello, What can I help you?
 ~ list_token_prices
 
 Blockchain service: 
-	LINK: {{prices.link}} AAVE: {{prices.aave}} BTC: {{prices.btc}}
-	ETH: {{prices.eth}} MATIC: {{prices.matic}} APE: {{prices.ape}}
+	LINK: {{list_price.prices.link}} AAVE: {{list_price.prices.aave}} BTC: {{list_price.prices.btc}}
+	ETH: {{list_price.prices.eth}} MATIC: {{list_price.prices.matic}} APE: {{list_price.prices.ape}}
 => END!
 
 ~ require_address
 
 Blockchain service: Which address do you want to send?
 do ask_for_address()
-if is_address
-	Blockchain service: Address {{address_input}}!
+if send_tokens.is_address
+	Blockchain service: Address {{send_tokens.address_input}}!
 	=> require_token_amount
 else
 	Blockchain service: The address input is empty or not valid, do you want to introduce again?
@@ -38,14 +38,14 @@ else
 
 Blockchain service: How many tokens do you want to send?
 do ask_for_amount()
-if is_valid_amount
-	Blockchain service: Amount {{amount_input}}!
+if send_tokens.is_valid_amount
+	Blockchain service: Amount {{send_tokens.amount_input}}!
 	do calc_fees()
 	do wait(2.0)
-	Blockchain service: You will pay this fees for the transaction (gas not included): {{fees}} AVAX
+	Blockchain service: You will pay this fees for the transaction (gas not included): {{send_tokens.fees}} AVAX
 	Blockchain service: You want to continue
 	- Yes
-		do send_tokens()
+		do ask_send_tokens()
 		=> END!
 	- No
 		=> cancel_operation

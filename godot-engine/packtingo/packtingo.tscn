@@ -31,10 +31,12 @@ font_color = Color(0.290196, 0.835294, 0.396078, 1)
 [node name="Packtingo" type="Node3D"]
 script = ExtResource("1_dcqax")
 
-[node name="Wall" parent="." instance=ExtResource("1_ovxvj")]
+[node name="Switch" type="Node3D" parent="."]
+
+[node name="Wall" parent="Switch" instance=ExtResource("1_ovxvj")]
 transform = Transform3D(0.0041018, 0, -0.4474, 0, 0.5301, 0, 0.308399, 0, 0.00595056, 3.65183, -0.4908, -2.45166)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Switch"]
 transform = Transform3D(0.399677, 0.052447, -0.915154, 0.916656, -0.0228678, 0.399023, 1.30912e-09, -0.998362, -0.0572156, 11.3297, 3.93106, 0)
 light_color = Color(0.27451, 0.541176, 1, 1)
 light_energy = 0.192
@@ -42,45 +44,47 @@ light_indirect_energy = 0.354
 light_volumetric_fog_energy = 1.646
 shadow_enabled = true
 
-[node name="Ground" type="StaticBody3D" parent="."]
-transform = Transform3D(0.44706, 0, 0.00221587, 0, 0.5301, 0, -0.00322256, 0, 0.307403, 3.71553, -1.59815, 0.0523554)
+[node name="Ground" type="StaticBody3D" parent="Switch"]
+transform = Transform3D(0.492987, 0, 0.0022129, 0, 0.53, 0, -0.00355362, 0, 0.306992, 3.13022, -1.59815, 0.0523554)
+collision_layer = 4
+collision_mask = 4
 
-[node name="floor" parent="Ground" instance=ExtResource("2_ibla5")]
+[node name="floor" parent="Switch/Ground" instance=ExtResource("2_ibla5")]
 transform = Transform3D(1, 0, 4.65661e-10, 0, 1, 0, -4.65661e-10, 0, 1, 0.0527239, 0.372954, -0.000181206)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(23, 0, 0, 0, 0.5, 0, 0, 0, 21, 0, 0.31, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Switch/Ground"]
+transform = Transform3D(23.5, 0, 0, 0, 0.5, 0, 0, 0, 21, 0, 0.31, 0)
 shape = SubResource("BoxShape3D_ieno5")
 
-[node name="CameraPivot" type="Marker3D" parent="."]
+[node name="CameraPivot" type="Marker3D" parent="Switch"]
 
-[node name="Camera" type="Camera3D" parent="CameraPivot"]
+[node name="Camera" type="Camera3D" parent="Switch/CameraPivot"]
 transform = Transform3D(-5.61684e-08, 0.334629, -0.94235, 1.99455e-08, 0.94235, 0.334629, 1, -5.68434e-14, -5.96046e-08, -2.59181, 0.496548, -0.0230738)
 environment = SubResource("Environment_ty8fd")
 fov = 60.5
 near = 0.078
 far = 12.21
 
-[node name="Ball" parent="." instance=ExtResource("4_wypf4")]
+[node name="Ball" parent="Switch" instance=ExtResource("4_wypf4")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.0248554, -1.08868, 0)
 
-[node name="UserInterface" type="Control" parent="."]
+[node name="UserInterface" type="Control" parent="Switch"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1150.0
 offset_bottom = 93.0
 
-[node name="Points" type="Label" parent="UserInterface"]
+[node name="Points" type="Label" parent="Switch/UserInterface"]
 layout_mode = 0
 offset_left = 46.0
 offset_top = 31.0
 offset_right = 220.0
 offset_bottom = 76.0
-text = "Score: 0"
+text = "Score: 4"
 label_settings = SubResource("LabelSettings_4g3sn")
 script = ExtResource("6_ghjeu")
 
-[node name="Lifes" type="Label" parent="UserInterface"]
+[node name="Lifes" type="Label" parent="Switch/UserInterface"]
 layout_mode = 0
 offset_left = 945.0
 offset_top = 34.0
@@ -90,7 +94,7 @@ text = "Lifes 3"
 label_settings = SubResource("LabelSettings_nmwo4")
 script = ExtResource("7_2b5g4")
 
-[node name="LoseGame" type="Label" parent="UserInterface"]
+[node name="LoseGame" type="Label" parent="Switch/UserInterface"]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -104,7 +108,7 @@ text = "YOU LOSE"
 label_settings = SubResource("LabelSettings_1qkcc")
 horizontal_alignment = 1
 
-[node name="WinGame" type="Label" parent="UserInterface"]
+[node name="WinGame" type="Label" parent="Switch/UserInterface"]
 visible = false
 layout_mode = 0
 offset_left = 438.0
@@ -115,5 +119,5 @@ text = "YOU WIN"
 label_settings = SubResource("LabelSettings_eaxrv")
 horizontal_alignment = 1
 
-[node name="Bar" parent="." instance=ExtResource("1_q10ic")]
+[node name="Bar" parent="Switch" instance=ExtResource("1_q10ic")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.691383, -1.0657, 0)
