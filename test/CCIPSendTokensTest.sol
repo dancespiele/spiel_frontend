@@ -242,7 +242,7 @@ contract CCIPSendTokensTest is Test {
         assertTrue(current_avax_balance < previous_avax_balance);
     }
 
-    function textUnwrapAvax() public {
+    function testUnwrapAvax() public {
         vm.startPrank(user);
 
         deal(0xd00ae08403B9bbb9124bB305C09058E32C39A48c, user, 5 ether);
@@ -250,6 +250,7 @@ contract CCIPSendTokensTest is Test {
         uint256 previous_avax_balance = user.balance;
         uint256 previous_wavax_balance = IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).balanceOf(user);
 
+        IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).approve(address(ccipSendTokens), 1 ether);
         ccipSendTokens.unwrapAvaxToken(1 ether);
 
         uint256 current_avax_balance = user.balance;

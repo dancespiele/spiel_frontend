@@ -1,70 +1,41 @@
 class_name SendTokens
 
-var ethers = JavaScriptBridge.get_interface("ethers")
-var window = JavaScriptBridge.get_interface("window")
+var ethers := JavaScriptBridge.get_interface("ethers")
+var window := JavaScriptBridge.get_interface("window")
+var console := JavaScriptBridge.get_interface("console")
 
-var get_signer_send_tokens_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signer_send_tokens_callback")))
-var get_play_destroy_the_box_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_play_destroy_the_box_callback")));
-var get_address_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_address_callback")))
-var get_allowance_wavax_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_allowance_wavax_callback")))
-var get_allowance_game_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_allowance_game_token_callback")))
-var get_wait_wavax_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_wavax_token_tx_callback")))
-var get_approve_game_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_approve_game_token_callback")))
-var get_wait_game_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_game_token_tx_callback")))
-var get_wait_send_token_tx_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wait_send_token_tx_callback")))
-var get_call_fees_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_call_fees_callback")))
-var get_tx_id_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_tx_id_callback")))
-var get_send_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_send_token_callback")))
+var get_signer_send_tokens_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_signer_send_tokens_callback")))
+var get_address_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_address_callback")))
+var get_allowance_wavax_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_allowance_wavax_callback")))
+var get_allowance_game_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_allowance_game_token_callback")))
+var get_wait_wavax_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_wavax_token_tx_callback")))
+var get_approve_game_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_approve_game_token_callback")))
+var get_wait_game_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_game_token_tx_callback")))
+var get_wait_send_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_send_token_tx_callback")))
+var get_call_fees_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_call_fees_callback")))
+var get_tx_id_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_tx_id_callback")))
+var get_send_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_send_token_callback")))
 
-var polygon_id = "12532609583862916517"
-var wavax_token = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
-var game_token = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
-var send_token_address: String = "0x94409A2D4fdc713daC8fc911B89a9Fe0A6a7eC80"
-var wallet_address
-var is_address = false
-var is_valid_amount = false
-var send_tokens_contract
-var amount_parsed
-var fees
-var address_input
-var amount_input
+var network_id: String
+var wavax_token := "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
+var game_token := "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
+var send_token_address := "0x7c6DBfBECdc3b54118F9e57F39aE884ef9e4D686"
+var wallet_address: String
+var is_address := false
+var is_valid_amount := false
+var amount_parsed: String
+var fees: float
+var address_input: String
+var amount_input: String
 var fees_wei
-var signer
-var edit_text
+var signer: JavaScriptObject
 
-func set_address():
-	edit_text = load("res://world/edit_text.tscn").instantiate()
-	edit_text.title = "Wallet address"
-	edit_text.ok_button_text = "Submit address"
-	State.get_tree().root.add_child(edit_text)
-	edit_text.popup_centered()
-	await edit_text.confirmed
-	if(ethers.isAddress(edit_text.input_text.text)):
-		address_input = edit_text.input_text.text
-		is_address = true
-	else:
-		is_address = false
-		edit_text.queue_free()
-
-func set_amount():
-	edit_text = load("res://world/edit_text.tscn").instantiate()
-	edit_text.title = "Token amount"
-	edit_text.ok_button_text = "Submit amount"
-	State.get_tree().root.add_child(edit_text)
-	edit_text.popup_centered()
-	await edit_text.confirmed
-	if edit_text.input_text.text.is_valid_float() or edit_text.input_text.text.is_valid_int():
-		amount_input = edit_text.input_text.text
-		is_valid_amount = true
-	else:
-		is_valid_amount = false
-		edit_text.queue_free()
-
-func get_calc_fees():
-	send_tokens_contract = window.send_tokens_contract
+func get_calc_fees(address_input_arg: String, amount_input_arg: String):
+	address_input = address_input_arg
+	amount_input = amount_input_arg
 	amount_parsed = ethers.parseUnits(amount_input, 18).toString()
-	send_tokens_contract.getFeePrediction(
-		polygon_id,
+	window.send_tokens_contract.getFeePrediction(
+		network_id,
 		address_input,
 		"Send {amount} tokens".format({ "amount": amount_input}),
 		wavax_token,
@@ -110,8 +81,8 @@ func get_wait_game_token_tx_callback(args):
 	args[0].wait().then(get_send_token_callback_ref)
 
 func get_send_token_callback(_args):
-	send_tokens_contract.connect(signer).sendTokenPayNative(
-		polygon_id,
+	window.send_tokens_contract.connect(signer).sendTokenPayNative(
+		network_id,
 		address_input,
 		"Send {amount} tokens".format({ "amount": amount_input}),
 		game_token,

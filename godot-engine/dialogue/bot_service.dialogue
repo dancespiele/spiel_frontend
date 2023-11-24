@@ -5,13 +5,15 @@ Blockchain service: Hello, What can I help you?
 	do ask_for_price_list()
 	do wait(2.0)
 	=> list_token_prices
-- Send token to other account to polygon
-	=> require_address
+- Wrap/unwrap AVAX tokens
+	=> wrap_or_unwrap
+- Send token to other networks
+	=> networks
 - Play Destroy the ball
 	Blockchain service: to start the game press enter
 	do play_destroy_the_box()
-	=> END!
-- Nothing => END
+	=> END
+- Nothing => cancel_operation
 
 ~ list_token_prices
 
@@ -20,12 +22,56 @@ Blockchain service:
 	ETH: {{list_price.prices.eth}} MATIC: {{list_price.prices.matic}} APE: {{list_price.prices.ape}}
 => END!
 
+~ wrap_or_unwrap
+
+Blockchain service: Do you want to wrap or unwrap tokens?
+- Wrap
+	set avax_tokens.operation_type = "wrap"
+	=> require_avax_amount
+- Unwrap
+	set avax_tokens.operation_type = "unwrap"
+	=> require_avax_amount
+
+~ require_avax_amount
+
+Blockchain service: how many AVAX do you want to {{avax_tokens.operation_type}}?
+do ask_for_amount()
+
+if utils.is_valid_amount
+	Blockchain service: Amount to {{avax_tokens.operation_type}}: {{utils.amount_input}}!
+	Blockchain service: Do you want to continue?
+	- Yes
+		if avax_tokens.operation_type == "wrap"
+			do ask_wrap_token()
+		else
+			do ask_unwrap_token()
+		=> END
+	- No
+		=> cancel_operation
+else
+	Blockchain service: The amount input is empty or not valid, do you want to introduce again?
+	- Yes
+		=> require_avax_amount
+	- No
+		=> cancel_operation
+
+~ networks
+
+Blockchain serive: Which networks do you want to send tokens?
+- Polygon mumbai
+	set send_tokens.network_id = "12532609583862916517"
+- Sepolia
+	set send_tokens.network_id = "16015286601757825753"
+- Goerli
+	set send_tokens.network_id = "2664363617261496610"
+=> require_address
+
 ~ require_address
 
 Blockchain service: Which address do you want to send?
 do ask_for_address()
-if send_tokens.is_address
-	Blockchain service: Address {{send_tokens.address_input}}!
+if utils.is_valid_address
+	Blockchain service: Address {{utils.address_input}}!
 	=> require_token_amount
 else
 	Blockchain service: The address input is empty or not valid, do you want to introduce again?
@@ -38,15 +84,15 @@ else
 
 Blockchain service: How many tokens do you want to send?
 do ask_for_amount()
-if send_tokens.is_valid_amount
-	Blockchain service: Amount {{send_tokens.amount_input}}!
+if utils.is_valid_amount
+	Blockchain service: Amount {{utils.amount_input}}!
 	do calc_fees()
 	do wait(2.0)
 	Blockchain service: You will pay this fees for the transaction (gas not included): {{send_tokens.fees}} AVAX
-	Blockchain service: You want to continue
+	Blockchain service: Do you want to continue?
 	- Yes
 		do ask_send_tokens()
-		=> END!
+		=> END
 	- No
 		=> cancel_operation
 else
@@ -58,5 +104,5 @@ else
 
 ~ cancel_operation
 
-Blockchain service: I'm here if you need my help again
+Blockchain service: I 'm here if you need my help again
 => END!

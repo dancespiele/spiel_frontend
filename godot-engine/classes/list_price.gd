@@ -1,11 +1,11 @@
 class_name ListPrice
 
-var get_list_prices_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_list_prices_callback")))
+var get_list_prices_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_list_prices_callback")))
 
-var window = JavaScriptBridge.get_interface("window")
-var ethers = JavaScriptBridge.get_interface("ethers")
+var window := JavaScriptBridge.get_interface("window")
+var ethers := JavaScriptBridge.get_interface("ethers")
 
-var prices = {
+var prices := {
 	"link": "",
 	"aave": "",
 	"btc": "",

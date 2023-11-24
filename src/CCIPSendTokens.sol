@@ -103,15 +103,15 @@ contract CCIPSendTokens is CCIPReceiver, OwnerIsCreator {
         w_nativeToken.transfer(msg.sender, msg.value);
     }
 
-    function unwrapAvaxToken(uint256 amount) external {
+    function unwrapAvaxToken(uint256 amount) external payable {
         if (amount > w_nativeToken.balanceOf(msg.sender)) {
             revert NotEnoughBalance(w_nativeToken.balanceOf(msg.sender), amount);
         }
 
         w_nativeToken.transferFrom(msg.sender, address(this), amount);
         w_nativeToken.withdraw(amount);
-        address payable owner = payable(address(this));
-        owner.transfer(amount);
+        address payable sender = payable(msg.sender);
+        sender.transfer(amount);
     }
 
     function getFeePrediction(

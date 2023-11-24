@@ -25,7 +25,7 @@ var get_address_callback_ref = JavaScriptBridge.create_callback(Callable(self, "
 var disconnect_callback_ref = JavaScriptBridge.create_callback((Callable(self, "disconnect_callback")))
 
 var feed_price_address: String = "0x275d6F77fC33FF5cb40c59e57dAAEB6fCc955082"
-var send_token_address: String = "0x94409A2D4fdc713daC8fc911B89a9Fe0A6a7eC80"
+var send_token_address: String = "0x7c6DBfBECdc3b54118F9e57F39aE884ef9e4D686"
 var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
