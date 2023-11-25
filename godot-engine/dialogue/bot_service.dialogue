@@ -10,8 +10,11 @@ Blockchain service: Hello, What can I help you?
 - Send token to other networks
 	=> networks
 - Play Destroy the ball
-	Blockchain service: to start the game press enter
-	do play_destroy_the_box()
+	Blockchain service: The price to play is [b]0.1 LINK[/b].\nThe game is call [b]Packtingo[/b] consist in destroy the [b]box which is different to the rest[/b] and need to\nbe destroyed before [b]to destroy 4 of the rest boxes[/b]. The special box will show randomly\nusing [url="https://docs.chain.link/vrf"][color=#108DC9][u]VRF of Chainlink[/u][/color][/url]. Do you want to continue?
+	- Yes
+		do play_destroy_the_box()
+	- No
+		=> cancel_operation
 	=> END
 - Nothing => cancel_operation
 

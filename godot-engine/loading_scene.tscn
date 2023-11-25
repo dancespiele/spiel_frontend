@@ -11,7 +11,7 @@ script = ExtResource("1_wt36v")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 layout_mode = 0
-offset_left = 193.0
-offset_top = 222.0
-offset_right = 981.0
-offset_bottom = 285.0
+offset_left = 236.0
+offset_top = 211.0
+offset_right = 1024.0
+offset_bottom = 274.0

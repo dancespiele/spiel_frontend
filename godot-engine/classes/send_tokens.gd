@@ -9,9 +9,11 @@ var get_address_callback_ref := JavaScriptBridge.create_callback((Callable(self,
 var get_allowance_wavax_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_allowance_wavax_callback")))
 var get_allowance_game_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_allowance_game_token_callback")))
 var get_wait_wavax_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_wavax_token_tx_callback")))
+var get_error_wait_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_error_wait_token_tx_callback")))
 var get_approve_game_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_approve_game_token_callback")))
 var get_wait_game_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_game_token_tx_callback")))
 var get_wait_send_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_wait_send_token_tx_callback")))
+var get_error_wait_send_token_tx_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_error_wait_send_token_tx_callback")))
 var get_call_fees_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_call_fees_callback")))
 var get_tx_id_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_tx_id_callback")))
 var get_send_token_callback_ref := JavaScriptBridge.create_callback((Callable(self, "get_send_token_callback")))
@@ -29,6 +31,9 @@ var address_input: String
 var amount_input: String
 var fees_wei
 var signer: JavaScriptObject
+var tx_hash: String
+var token: String
+var error_message: String
 
 func get_calc_fees(address_input_arg: String, amount_input_arg: String):
 	address_input = address_input_arg
@@ -63,7 +68,13 @@ func get_allowance_wavax_callback(args):
 	if(args[0].toString().to_int() > fees_wei.toString().to_int()):
 		get_approve_game_token_callback(null)
 	else:
-		window.wavax_token_contract.connect(signer).approve(send_token_address, fees_wei).then(get_wait_wavax_token_tx_callback_ref)
+		token = "WAVAX"
+		Utils.add_dialogue("approve_token", Utils.dialogueUrl.feedback)
+		window.wavax_token_contract.connect(signer).approve(
+			send_token_address, fees_wei
+		).then(
+			get_wait_wavax_token_tx_callback_ref
+		).catch(get_error_wait_token_tx_callback_ref)
 
 func get_wait_wavax_token_tx_callback(args):
 	args[0].wait().then(get_approve_game_token_callback_ref)
@@ -75,25 +86,42 @@ func get_allowance_game_token_callback(args):
 	if(args[0].toString().to_int() > amount_parsed.to_int()):
 		get_send_token_callback(null)
 	else:
-		window.game_token_contract.connect(signer).approve(send_token_address, amount_parsed).then(get_wait_game_token_tx_callback_ref)
+		token = "GAME"
+		Utils.add_dialogue("approve_token", Utils.dialogueUrl.feedback)
+		window.game_token_contract.connect(signer).approve(
+			send_token_address, amount_parsed
+		).then(
+			get_wait_game_token_tx_callback_ref
+		).catch(get_error_wait_token_tx_callback_ref)
+
+func get_error_wait_token_tx_callback(args):
+	error_message = args[0].message
+	Utils.add_dialogue("send_tokens_approve_error", Utils.dialogueUrl.error_handle)
 
 func get_wait_game_token_tx_callback(args):
 	args[0].wait().then(get_send_token_callback_ref)
 
+
 func get_send_token_callback(_args):
+	Utils.add_dialogue("sign_contract", Utils.dialogueUrl.feedback)
 	window.send_tokens_contract.connect(signer).sendTokenPayNative(
 		network_id,
 		address_input,
 		"Send {amount} tokens".format({ "amount": amount_input}),
 		game_token,
 		amount_parsed
-	).then(get_wait_send_token_tx_callback_ref)
+	).then(
+		get_wait_send_token_tx_callback_ref
+	).catch(get_error_wait_send_token_tx_callback_ref)
 
 func get_wait_send_token_tx_callback(args):
 	args[0].wait().then(get_tx_id_callback_ref)
 
-func get_tx_id_callback(_args):
-	var balloon = preload("res://dialogue/balloon.tscn").instantiate()
-	var transaction_sent_dialogue = load("res://dialogue/transaction_sent.dialogue") as DialogueResource
-	State.get_tree().current_scene.add_child(balloon)
-	balloon.start(transaction_sent_dialogue, "transaction_sent")
+func get_error_wait_send_token_tx_callback(args):
+	error_message = args[0].message
+	Utils.add_dialogue("send_tokens_sign_error", Utils.dialogueUrl.error_handle)	
+
+func get_tx_id_callback(args):
+	console.log(args[0])
+	tx_hash = args[0].hash
+	Utils.add_dialogue("transaction_sent", Utils.dialogueUrl.feedback)

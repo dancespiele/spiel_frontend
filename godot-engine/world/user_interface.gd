@@ -30,7 +30,6 @@ var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address: String = "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
-var utils = Utils.new()
 
 func _init():
 	get_file_data()
@@ -111,7 +110,7 @@ func get_signer_callback(args):
 		args[0].getAddress().then(get_address_callback_ref)
 
 func get_address_callback(args):
-	$WalletConnect.set_text(utils.shortWalletAddress(args[0].address))
+	$WalletConnect.set_text(Utils.shortWalletAddress(args[0].address))
 	
 func _on_wallet_connect_pressed():
 	connect_handled()

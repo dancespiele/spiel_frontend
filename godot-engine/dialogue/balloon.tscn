@@ -121,4 +121,5 @@ layout_mode = 2
 text = "Response example"
 
 [connection signal="gui_input" from="Balloon" to="." method="_on_balloon_gui_input"]
+[connection signal="meta_clicked" from="Balloon/Dialogue/VBoxContainer/DialogueLabel" to="." method="_on_dialogue_label_meta_clicked"]
 [connection signal="response_selected" from="Balloon/Dialogue/VBoxContainer/ResponsesMenu" to="." method="_on_responses_menu_response_selected"]

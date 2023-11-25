@@ -41,13 +41,13 @@ var TOKEN_DEFINITIONS: Dictionary = {
 	DialogueConstants.TOKEN_OPERATOR: RegEx.create_from_string("^(\\+|\\-|\\*|/|%)"),
 	DialogueConstants.TOKEN_COMMA: RegEx.create_from_string("^,"),
 	DialogueConstants.TOKEN_DOT: RegEx.create_from_string("^\\."),
-	DialogueConstants.TOKEN_CONDITION: RegEx.create_from_string("^(if|elif|else)"),
-	DialogueConstants.TOKEN_BOOL: RegEx.create_from_string("^(true|false)"),
+	DialogueConstants.TOKEN_STRING: RegEx.create_from_string("^(\".*?\"|\'.*?\')"),
 	DialogueConstants.TOKEN_NOT: RegEx.create_from_string("^(not( |$)|!)"),
 	DialogueConstants.TOKEN_AND_OR: RegEx.create_from_string("^(and|or)( |$)"),
-	DialogueConstants.TOKEN_STRING: RegEx.create_from_string("^(\".*?\"|\'.*?\')"),
 	DialogueConstants.TOKEN_VARIABLE: RegEx.create_from_string("^[a-zA-Z_][a-zA-Z_0-9]*"),
-	DialogueConstants.TOKEN_COMMENT: RegEx.create_from_string("^#.*")
+	DialogueConstants.TOKEN_COMMENT: RegEx.create_from_string("^#.*"),
+	DialogueConstants.TOKEN_CONDITION: RegEx.create_from_string("^(if|elif|else)"),
+	DialogueConstants.TOKEN_BOOL: RegEx.create_from_string("^(true|false)")
 }
 
 var WEIGHTED_RANDOM_SIBLINGS_REGEX: RegEx = RegEx.create_from_string("^\\%(?<weight>[\\d.]+)? ")
@@ -1159,7 +1159,7 @@ func extract_markers(line: String) -> ResolvedLineData:
 	var speeds: Dictionary = {}
 	var mutations: Array[Array] = []
 	var bbcodes: Array = []
-	var time = null
+	var time: String = ""
 
 	# Extract all of the BB codes so that we know the actual text (we could do this easier with
 	# a RichTextLabel but then we'd need to await idle_frame which is annoying)

@@ -6,7 +6,18 @@ var is_valid_address: bool
 var is_valid_amount: bool
 var ethers := JavaScriptBridge.get_interface("ethers")
 
-func shortWalletAddress(walletAddress: String):
+static var dialogueUrl = {
+  "feedback": "res://dialogue/feedback.dialogue",
+  "error_handle": "res://dialogue/error_handle.dialogue",
+}
+
+static func add_dialogue(dialogue: String, dialogue_url: String):
+  var balloon = preload("res://dialogue/balloon.tscn").instantiate()
+  var feedback_dialogue = load(dialogue_url) as DialogueResource
+  State.get_tree().current_scene.add_child(balloon)
+  balloon.start(feedback_dialogue, dialogue)
+
+static func shortWalletAddress(walletAddress: String):
   return "{first_part}...{second_part}".format({ "first_part": walletAddress.substr(0, 6), "second_part": walletAddress.substr(38, -1)})
 
 func set_address():
