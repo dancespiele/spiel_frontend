@@ -1,0 +1,35 @@
+~ transaction_sent
+
+if operation == "avax_tokens"
+	The [url="https://testnet.snowtrace.io/tx/{{avax_tokens.tx_hash}}"][color=#108DC9][u]transaction[/u][/color][/url] was sent
+elif operation == "send_tokens"
+	Blockchain service: The [url="https://ccip.chain.link/tx/{{send_tokens.tx_hash}}"][color=#108DC9][u]transaction[/u][/color][/url] was sent
+else
+	Blockchain service: The [url="https://testnet.snowtrace.io/tx/{{destroy_box.tx_hash}}"][color=#108DC9][u]transaction[/u][/color][/url] was sent
+- Close
+	=> END
+
+~ approve_token
+
+if operation == "avax_tokens"
+	Blockchain service: Approve {{avax_tokens.token}} and wait until transaction is confirmed [next=2.0]
+elif operation == "send_tokens"
+	Blockchain service: Approve {{send_tokens.token}} and wait until transaction is confirmed [next=2.0]
+else
+	Blockchain service: Approve {{destroy_box.token}} and wait until transaction is confirmed [next=2.0]
+=> END
+
+~ sign_contract
+
+Blockchain service: Sign contract to proccess with the operation [next=2.0]
+=> END
+
+~ sign_random_generation
+
+Blockchain service: Sign the contract in order to generate the box to destroy [next=2.0]
+=> END
+
+~ wait_game
+
+Blockchain service: The game will start in [b]30 seconds[/b], the time to generate the box to destroy [next=2.0]
+=> END

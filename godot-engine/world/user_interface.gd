@@ -21,8 +21,7 @@ var get_link_token_callback_ref = JavaScriptBridge.create_callback((Callable(sel
 var get_link_token_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_link_token_json_callback")))
 var connect_request_callback_ref = JavaScriptBridge.create_callback(Callable(self, "connect_request_callback"))
 var get_signer_callback_ref = JavaScriptBridge.create_callback(Callable(self, "get_signer_callback"))
-var get_address_callback_ref = JavaScriptBridge.create_callback(Callable(self, "get_address_callback"))
-var disconnect_callback_ref = JavaScriptBridge.create_callback((Callable(self, "disconnect_callback")))
+var get_signature_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signature_callback")))
 
 var feed_price_address: String = "0x275d6F77fC33FF5cb40c59e57dAAEB6fCc955082"
 var send_token_address: String = "0x7c6DBfBECdc3b54118F9e57F39aE884ef9e4D686"
@@ -30,8 +29,13 @@ var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address: String = "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
+var message: String
+var signature: String
+var auth: Auth
 
 func _init():
+	auth = Auth.new()
+
 	get_file_data()
 
 	if (ethereum):
@@ -39,6 +43,18 @@ func _init():
 		provider = JavaScriptBridge.create_object("BrowserProvider", ethereum)
 		window.provider = provider
 
+func _ready():
+	var is_account_connected = check_account_connected()
+
+	if is_account_connected:
+		connect_request_callback(null)
+
+func check_account_connected():
+	var claims = auth.get_claims()
+	if claims and claims.iss:
+		State.is_account_connected = true
+	
+	return State.is_account_connected
 
 func get_file_data():
 	window.Contract = ethers.Contract
@@ -96,21 +112,62 @@ func connect_handled():
 		provider.send("eth_requestAccounts", []).then(connect_request_callback_ref)
 	else:
 		$WalletConnect.set_text("Connect Wallet")
-		ethereum.on('disconnect', disconnect_callback_ref)
+		disconnect_account()
 
 func connect_request_callback(_args):
-	provider.getSigner().then(get_address_callback_ref)
+	provider.getSigner().then(get_signer_callback_ref)
 
-func disconnect_callback(args):
-	console.log(args[0])
+func disconnect_account():
+	auth.delete_token()
+	State.is_account_connected = false
+
 
 func get_signer_callback(args):
-	if args:
-		window.Signer = args[0]
-		args[0].getAddress().then(get_address_callback_ref)
+	var signer = args[0]
+	window.signer = signer
 
-func get_address_callback(args):
-	$WalletConnect.set_text(Utils.shortWalletAddress(args[0].address))
+	var is_account_connected = check_account_connected()
+
+	if !is_account_connected:
+		Utils.request(
+			self,
+			self._request_nonce_completed,
+			["Content-Type: application/json"],
+			"http://127.0.0.1:3100/nonce/{address}".format({"address": window.signer.address}),
+			HTTPClient.METHOD_GET,
+		)
+	else:
+		$WalletConnect.set_text(Utils.shortWalletAddress(window.signer.address))
+
+func _request_nonce_completed(_result, _response_code, _headers, body):
+	var response = JSON.parse_string(body.get_string_from_utf8())
+	message = auth.create_siwe_message(window.signer.address, 'Sign in with Ethereum to the Web4dlife metaverso.', response)
+	window.signer.signMessage(message).then(get_signature_callback_ref)
+
+func get_signature_callback(args):
+	signature = args[0]
 	
+	var client_assertion = JSON.stringify({"signature": signature, "message": message})
+
+	Utils.request(
+		self,
+		self._request_login_completed,
+		["Content-Type: application/json"],
+		"http://127.0.0.1:3100/login",
+		HTTPClient.METHOD_POST,
+		client_assertion
+	)
+
+func _request_login_completed(_result, _response_code, _headers, body):
+	var response = JSON.parse_string(body.get_string_from_utf8())
+
+	auth.store_token(response)
+	State.is_account_connected = true
+
+	$WalletConnect.set_text(Utils.shortWalletAddress(window.signer.address))
+
+func setAddress(addr: String):
+	$WalletConnect.set_text(Utils.shortWalletAddress(addr))
+
 func _on_wallet_connect_pressed():
 	connect_handled()

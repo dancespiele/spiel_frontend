@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_11"
+type="Resource"
+uid="uid://dpctalns7yj4r"
+path="res://.godot/imported/error_handle.dialogue-976b39a8e5841cdb0ef43db95b5cf5e1.tres"
+
+[deps]
+
+source_file="res://dialogue/error_handle.dialogue"
+dest_files=["res://.godot/imported/error_handle.dialogue-976b39a8e5841cdb0ef43db95b5cf5e1.tres"]
+
+[params]
+
+defaults=true
