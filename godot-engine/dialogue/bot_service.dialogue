@@ -6,16 +6,26 @@ Blockchain service: Hello, What can I help you?
 	do wait(2.0)
 	=> list_token_prices
 - Wrap/unwrap AVAX tokens
-	=> wrap_or_unwrap
+	if is_account_connected
+		=> wrap_or_unwrap
+	else
+		=> no_connected_account
+		
 - Send token to other networks
-	=> networks
+	if is_account_connected
+		=> networks
+	else
+		=> no_connected_account
 - Play Destroy the ball
-	Blockchain service: The price to play is [b]0.1 LINK[/b].\nThe game is call [b]Packtingo[/b] consist in destroy the [b]box which is different to the rest[/b] and need to\nbe destroyed before [b]to destroy 4 of the rest boxes[/b]. The special box will show randomly\nusing [url="https://docs.chain.link/vrf"][color=#108DC9][u]VRF of Chainlink[/u][/color][/url]. Do you want to continue?
-	- Yes
-		do play_destroy_the_box()
-	- No
-		=> cancel_operation
-	=> END
+	if is_account_connected
+		Blockchain service: The price to play is [b]0.1 LINK[/b].\nThe game is call [b]Packtingo[/b] consist in destroy the [b]box which is different to the rest[/b] and need to\nbe destroyed before [b]to destroy 4 of the rest boxes[/b]. The special box will show randomly\nusing [url="https://docs.chain.link/vrf"][color=#108DC9][u]VRF of Chainlink[/u][/color][/url]. Do you want to continue?
+		- Yes
+			do play_destroy_the_box()
+		- No
+			=> cancel_operation
+		=> END
+	else
+		=> no_connected_account
 - Nothing => cancel_operation
 
 ~ list_token_prices
@@ -104,6 +114,11 @@ else
 		=> require_token_amount
 	- No
 		=> cancel_operation
+
+~ no_connected_account
+
+Blockchain service: Please connect your wallet first
+=> END!
 
 ~ cancel_operation
 

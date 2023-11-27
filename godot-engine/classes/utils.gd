@@ -20,6 +20,17 @@ static func add_dialogue(dialogue: String, dialogue_url: String):
 static func shortWalletAddress(walletAddress: String):
   return "{first_part}...{second_part}".format({ "first_part": walletAddress.substr(0, 6), "second_part": walletAddress.substr(38, -1)})
 
+static func request(scene: Node, callback: Callable, headers: Array, url: String, method: HTTPClient.Method, body: String = ""):
+  var http_request = HTTPRequest.new()
+  http_request.request_completed.connect(callback)
+  scene.add_child(http_request)
+
+  var error = http_request.request(url, headers, method, body)
+
+  if error != OK:
+    push_error("The request fail")
+
+
 func set_address():
   address_input = ""
   var edit_text = load("res://world/edit_text.tscn").instantiate()

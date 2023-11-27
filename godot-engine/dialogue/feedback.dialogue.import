@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_11"
+type="Resource"
+uid="uid://ri4uhwg4tmpp"
+path="res://.godot/imported/feedback.dialogue-54f40f7abddf49f033a58c519c77b592.tres"
+
+[deps]
+
+source_file="res://dialogue/feedback.dialogue"
+dest_files=["res://.godot/imported/feedback.dialogue-54f40f7abddf49f033a58c519c77b592.tres"]
+
+[params]
+
+defaults=true
