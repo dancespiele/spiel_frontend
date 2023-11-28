@@ -1,33 +1,28 @@
-use super::helpers::{get_schema, ExecOpt};
+use super::helpers::ExecOpt;
 use barrel::backend::Pg;
 use barrel::{types, Migration};
 
 pub fn migration(exec_opt: ExecOpt) -> String {
-    let m = Migration::new();
-    let mut schema = m.schema(get_schema());
+    let mut m = Migration::new();
 
     match exec_opt {
         ExecOpt::Up => {
-            schema.create_table("auth", |t| {
-                t.add_column("id", types::text().unique(true).primary(true));
-                t.add_column("user_id", types::text());
-                t.add_column("password", types::text());
-                t.inject_custom("created_at TIMESTAMP NOT NULL");
-                t.inject_custom("updated_at TIMESTAMP NOT NULL");
-                t.inject_custom(
-                    "CONSTRAINT user_id_auth_fkey foreign key (user_id) references base.user(id) ON DELETE CASCADE",
-                );
-                t.inject_custom("CONSTRAINT auth_user_id_unique UNIQUE (user_id)");
+            m.create_table("score", |t| {
+                t.add_column("id", types::varchar(255).unique(true).primary(true));
+                t.add_column("account_id", types::varchar(255));
+                t.add_foreign_key(&["account_id"], "account", &["id"]);
+                t.add_column("score", types::integer());
+                t.add_column("created_at", types::datetime());
+                t.add_column("updated_at", types::datetime());
             });
-            schema.make::<Pg>()
+            m.make::<Pg>()
         }
         ExecOpt::Down => {
-            schema.change_table("auth", |t| {
-                t.inject_custom("DROP CONSTRAINT auth_user_id_unique");
-                t.inject_custom("DROP CONSTRAINT user_id_auth_fkey");
+            m.change_table("score", |t| {
+                t.inject_custom("DROP CONSTRAINT score_account_id_fkey");
             });
-            schema.drop_table("auth");
-            schema.make::<Pg>()
+            m.drop_table("score");
+            m.make::<Pg>()
         }
     }
 }
