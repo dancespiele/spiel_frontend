@@ -1,6 +1,5 @@
-use super::create_score;
+use super::{change_score_column, create_account, create_prize, create_score};
 use refinery::{Migration, Runner};
-use std::env;
 
 pub enum ExecOpt {
     Up,
@@ -12,20 +11,45 @@ pub struct RollbackScript {
     pub sql: String,
 }
 
-pub fn get_schema() -> String {
-    env::var("SCHEMA").unwrap_or_else(|_| String::from(""))
-}
-
 pub fn get_migrations() -> Runner {
-    let v1_migration =
-        Migration::unapplied("V1__create_user", &create_score::migration(ExecOpt::Up)).unwrap();
+    let v1_migration = Migration::unapplied(
+        "V1__create_account",
+        &create_account::migration(ExecOpt::Up),
+    )
+    .unwrap();
 
-    Runner::new(&[v1_migration])
+    let v2_migration =
+        Migration::unapplied("V2__create_score", &create_score::migration(ExecOpt::Up)).unwrap();
+
+    let v3_migration =
+        Migration::unapplied("V3__create_prize", &create_prize::migration(ExecOpt::Up)).unwrap();
+
+    let v4_migration = Migration::unapplied(
+        "V4__change_score_column",
+        &change_score_column::migration(ExecOpt::Up),
+    )
+    .unwrap();
+
+    Runner::new(&[v1_migration, v2_migration, v3_migration, v4_migration])
 }
 
 pub fn get_rollback_migrations() -> Vec<RollbackScript> {
-    vec![RollbackScript {
-        name: "V1__create_score".to_string(),
-        sql: create_score::migration(ExecOpt::Down),
-    }]
+    vec![
+        RollbackScript {
+            name: "V1__create_account".to_string(),
+            sql: create_account::migration(ExecOpt::Down),
+        },
+        RollbackScript {
+            name: "V2__create_score".to_string(),
+            sql: create_score::migration(ExecOpt::Down),
+        },
+        RollbackScript {
+            name: "V3__create_prize".to_string(),
+            sql: create_prize::migration(ExecOpt::Down),
+        },
+        RollbackScript {
+            name: "V4__change_score_column".to_string(),
+            sql: change_score_column::migration(ExecOpt::Down),
+        },
+    ]
 }

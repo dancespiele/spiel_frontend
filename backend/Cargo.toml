@@ -20,10 +20,9 @@ hex="0.4.3"
 log="0.4.20"
 chrono = {version="0.4.31", features= ["serde", "rustc-serialize"]}
 pretty_env_logger = "0.5.0"
-utoipa="4.1.0"
+uuid={version="1.6.1", features = ["serde", "v4"]}
+utoipa= {version = "4.1.0", features=["chrono"]}
 utoipa-swagger-ui = "4.0.0"
 anyhow = "1.0.75"
 diesel = {version = "2.1.4", features = ["postgres", "r2d2", "chrono", "serde_json"]}
 diesel-derive-enum = {version= "2.1", features= ["postgres"]}
-r2d2 = "0.8"
-r2d2-diesel = "1.0"

@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 dotenv="0.15"
-refinery= {git="https://github.com/rust-db/refinery.git", branch = "master", features=["postgres"]}
+refinery= {version="0.8", features=["postgres"]}
 barrel= {version="0.7", features=["pg"]}
 postgres="0.19"

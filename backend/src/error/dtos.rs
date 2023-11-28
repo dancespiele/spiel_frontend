@@ -1,5 +1,6 @@
 use anyhow::Error as AnyError;
 use bcrypt::BcryptError;
+use diesel::r2d2::Error as PgError;
 use hex::FromHexError;
 use jsonwebtoken::errors::Error as ErrorToken;
 use serde_json::error::Error as SerdeError;
@@ -99,3 +100,10 @@ pub struct CustomError {
 }
 
 impl Reject for CustomError {}
+
+#[derive(Debug)]
+pub struct DbError {
+    pub error: PgError,
+}
+
+impl Reject for DbError {}

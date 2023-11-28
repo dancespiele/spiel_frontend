@@ -1,4 +1,4 @@
-use super::{auth_guard, get_nonce, login, verify_signature, SessionDto, SignatureDto};
+use super::{auth_guard, get_nonce, login, verify_signature, SessionDto};
 use sled::Db;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -12,14 +12,6 @@ pub fn auth(
         .and_then(auth_guard)
 }
 
-#[utoipa::path(
-    post,
-    path = "/login",
-    params(SignatureDto),
-    responses(
-        (status = 200, description = "Session token", body = [&str])
-    )
-)]
 pub fn session_login(
     tree: impl Filter<Extract = (Arc<Mutex<Db>>,), Error = Rejection> + Clone + Send,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -32,16 +24,6 @@ pub fn session_login(
     )
 }
 
-#[utoipa::path(
-    get,
-    path = "/nonce/{address}",
-    params(
-        ("address" = String, Path, description = "Address account to get nonce for")
-    ),
-    responses(
-        (status = 200, description = "Session token", body = [&str]),
-    )
-)]
 pub fn nonce(
     tree: impl Filter<Extract = (Arc<Mutex<Db>>,), Error = Rejection> + Clone + Send,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {

@@ -47,6 +47,14 @@ pub async fn verify_signature(
     Ok(SessionDto::from((message.address, message.nonce)))
 }
 
+#[utoipa::path(
+    post,
+    path = "/login",
+    request_body = SignatureDto,
+    responses(
+        (status = 200, description = "Session token", body = [&str])
+    )
+)]
 pub async fn login(account: SessionDto) -> Result<impl Reply, Rejection> {
     let secret = env::var("SECRET").expect("SECRET must be set");
 
@@ -62,6 +70,16 @@ pub async fn login(account: SessionDto) -> Result<impl Reply, Rejection> {
     Ok(reply::json(&token))
 }
 
+#[utoipa::path(
+    get,
+    path = "/nonce/{address}",
+    params(
+        ("address" = String, Path, description = "Address account to get nonce for")
+    ),
+    responses(
+        (status = 200, description = "Session token", body = [&str]),
+    )
+)]
 pub async fn get_nonce(tree: Arc<Mutex<Db>>, address: String) -> Result<impl Reply, Rejection> {
     let nonce = generate_nonce();
 

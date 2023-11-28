@@ -2,16 +2,21 @@
 extern crate serde;
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate diesel;
 
 mod db;
 mod docs;
 mod error;
 mod guard;
+mod packtingo;
+mod schema;
 
-use db::init_tree;
+use db::{init_pool, init_tree};
 use docs::{api_doc, swagger_ui};
 use error::error_handler;
 use guard::{nonce, session_login};
+use packtingo::{prize, score};
 use std::env;
 use std::net::SocketAddr;
 use warp::Filter;
@@ -23,6 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_url = env::var("SERVER_URL").expect("SERVER_URL must be set");
     let addr: SocketAddr = server_url.parse().unwrap();
     let tree = init_tree().expect("Failed to initialize sled");
+    let pool = init_pool().expect("Failed to initialize pg");
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -40,7 +46,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_methods(vec!["POST", "GET", "PUT", "PATCH", "DELETE"]);
 
     let routes = session_login(tree.clone())
-        .or(nonce(tree))
+        .or(nonce(tree.clone()))
+        .or(score(tree.clone(), pool.clone()))
+        .or(prize(tree, pool))
         .or(api_doc())
         .or(swagger_ui())
         .recover(error_handler)

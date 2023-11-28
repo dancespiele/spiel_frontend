@@ -1,6 +1,6 @@
 use super::{
-    BadRequest, BufError, ConvertToString, EnvError, Forbidden, HashPwdError, HexError, JwtError,
-    NotFound, TransformError, TreeError, VerifySignatureError,
+    BadRequest, BufError, ConvertToString, DbError, EnvError, Forbidden, HashPwdError, HexError,
+    JwtError, NotFound, TransformError, TreeError, VerifySignatureError,
 };
 use std::convert::Infallible;
 use warp::http::StatusCode;
@@ -83,6 +83,10 @@ pub async fn error_handler(err: Rejection) -> Result<impl Reply, Infallible> {
     } else if let Some(env_error) = err.find::<EnvError>() {
         code = StatusCode::INTERNAL_SERVER_ERROR;
         message = format!("Env error: {}", env_error.error);
+        error!("{}", message);
+    } else if let Some(db_error) = err.find::<DbError>() {
+        code = StatusCode::INTERNAL_SERVER_ERROR;
+        message = format!("Database error: {}", db_error.error);
         error!("{}", message);
     } else {
         code = StatusCode::INTERNAL_SERVER_ERROR;
