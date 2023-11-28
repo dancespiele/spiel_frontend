@@ -30,4 +30,4 @@ table! {
 joinable!(prize -> score (score_id));
 joinable!(score -> account (account_id));
 
-allow_tables_to_appear_in_same_query!(account, prize, score,);
+allow_tables_to_appear_in_same_query!(account, prize, score);
