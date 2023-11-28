@@ -2,15 +2,14 @@ use chrono::prelude::*;
 use chrono::Duration;
 use hex::encode;
 use std::ops::Add;
-use utoipa::{IntoParams, ToSchema};
+use utoipa::ToSchema;
 
-#[derive(Debug, Serialize, Deserialize, IntoParams)]
-#[into_params(parameter_in= Path)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct SignatureDto {
     /// Message to sign
-    #[param(style=Label, example="Hello, world!")]
+    #[schema(example = "Hello, world!")]
     pub message: String,
-    #[param(style=Label, example="12345678901234567890")]
+    #[schema(example = "12345678901234567890")]
     pub signature: String,
 }
 

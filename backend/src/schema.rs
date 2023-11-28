@@ -21,7 +21,7 @@ table! {
   score (id) {
       id -> Varchar,
       account_id -> Varchar,
-      score -> Int4,
+      points -> Int4,
       created_at -> Timestamp,
       updated_at -> Timestamp,
   }

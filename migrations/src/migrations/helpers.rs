@@ -1,4 +1,4 @@
-use super::{create_account, create_prize, create_score};
+use super::{change_score_column, create_account, create_prize, create_score};
 use refinery::{Migration, Runner};
 
 pub enum ExecOpt {
@@ -24,7 +24,13 @@ pub fn get_migrations() -> Runner {
     let v3_migration =
         Migration::unapplied("V3__create_prize", &create_prize::migration(ExecOpt::Up)).unwrap();
 
-    Runner::new(&[v1_migration, v2_migration, v3_migration])
+    let v4_migration = Migration::unapplied(
+        "V4__change_score_column",
+        &change_score_column::migration(ExecOpt::Up),
+    )
+    .unwrap();
+
+    Runner::new(&[v1_migration, v2_migration, v3_migration, v4_migration])
 }
 
 pub fn get_rollback_migrations() -> Vec<RollbackScript> {
@@ -40,6 +46,10 @@ pub fn get_rollback_migrations() -> Vec<RollbackScript> {
         RollbackScript {
             name: "V3__create_prize".to_string(),
             sql: create_prize::migration(ExecOpt::Down),
+        },
+        RollbackScript {
+            name: "V4__change_score_column".to_string(),
+            sql: change_score_column::migration(ExecOpt::Down),
         },
     ]
 }
