@@ -6,7 +6,6 @@ extends CharacterBody3D
 var parent_scene: Node
 var lifes_label: Label
 var lose_game_label: Label
-var win_game_label: Label
 signal screen_exited
 
 # Called when the node enters the scene tree for the first time.
@@ -15,7 +14,6 @@ func _ready():
 	parent_scene = get_parent()
 	lifes_label = parent_scene.get_node("UserInterface/Lifes")
 	lose_game_label = parent_scene.get_node("UserInterface/LoseGame")
-	win_game_label = parent_scene.get_node("UserInterface/WinGame")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -39,36 +37,22 @@ func _physics_process(delta):
 
 			if collider && collider.is_in_group("box"):
 				await collider.destroy()
-				check_exists_boxes()
 			
 			if collider && collider.is_in_group("back_wall"):
 				on_collide_back_wall()
-
-func check_exists_boxes():
-	for child in parent_scene.get_children():
-		if child.is_in_group("box"):
-			total_box +=1
-
-	if total_box <= 1:
-		win_game_label.show()
-		reset_position()
-	else:
-		total_box = 0
-
 
 func reset_position():
 	target_velocity = Vector3.ZERO
 	velocity = target_velocity
 	position = initial_position
+	await get_tree().create_timer(3).timeout
 	screen_exited.emit()
 
 func exit_screen():
 	reset_position()
 
 func on_collide_back_wall():
-	if lifes_label.lifes <= 1:
-		lose_game_label.show()
-		queue_free()
-	else:
-		exit_screen() # Replace with function body.
+	lose_game_label.show()
+	queue_free()
+	exit_screen() # Replace with function body.
   

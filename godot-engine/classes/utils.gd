@@ -30,6 +30,16 @@ static func request(scene: Node, callback: Callable, headers: Array, url: String
   if error != OK:
     push_error("The request fail")
 
+static func checkOrswitchNetwork():
+  var ethereum := JavaScriptBridge.get_interface("ethereum")
+  var window := JavaScriptBridge.get_interface("window")
+
+  if ethereum.chainId != "0xa869":
+    JavaScriptBridge.eval("window.chainParams = { method: 'wallet_switchEthereumChain', params: [{ chainId: '0xa869'}]}")
+
+  var requestedChangeToken = ethereum.request(window.chainParams)
+
+  return requestedChangeToken
 
 func set_address():
   address_input = ""

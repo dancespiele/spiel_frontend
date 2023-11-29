@@ -14,7 +14,7 @@ use std::env;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let url_db = env::var("URL_DB").expect("URL_DB must be set");
+    let url_db = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     let mut conn = Client::connect(&url_db, NoTls).unwrap();
     let migrations = get_migrations();

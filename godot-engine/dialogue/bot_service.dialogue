@@ -7,23 +7,32 @@ Blockchain service: Hello, What can I help you?
 	=> list_token_prices
 - Wrap/unwrap AVAX tokens
 	if is_account_connected
-		=> wrap_or_unwrap
+		if chainId == "0xa869"
+			=> wrap_or_unwrap
+		else
+			=> change_network
 	else
 		=> no_connected_account
 		
 - Send token to other networks
 	if is_account_connected
-		=> networks
+		if chainId == "0xa869"
+			=> networks
+		else
+			=> change_network
 	else
 		=> no_connected_account
 - Play Destroy the ball
 	if is_account_connected
-		Blockchain service: The price to play is [b]0.1 LINK[/b].\nThe game is call [b]Packtingo[/b] consist in destroy the [b]box which is different to the rest[/b] and need to\nbe destroyed before [b]to destroy 4 of the rest boxes[/b]. The special box will show randomly\nusing [url="https://docs.chain.link/vrf"][color=#108DC9][u]VRF of Chainlink[/u][/color][/url]. Do you want to continue?
-		- Yes
-			do play_destroy_the_box()
-		- No
-			=> cancel_operation
-		=> END
+		if chainId == "0xa869"
+			Blockchain service: The price to play is [b]0.1 LINK[/b].\nThe game is call [b]Packtingo[/b] consist in destroy the [b]box which is different to the rest[/b] and need to\nbe destroyed before [b]to destroy 4 of the rest boxes[/b]. The special box will show randomly\nusing [url="https://docs.chain.link/vrf"][color=#108DC9][u]VRF of Chainlink[/u][/color][/url]. Do you want to continue?
+			- Yes
+				do play_destroy_the_box()
+			- No
+				=> cancel_operation
+			=> END
+		else
+			=> change_network
 	else
 		=> no_connected_account
 - Nothing => cancel_operation
@@ -70,7 +79,7 @@ else
 
 ~ networks
 
-Blockchain serive: Which networks do you want to send tokens?
+Blockchain service: Which networks do you want to send tokens?
 - Polygon mumbai
 	set send_tokens.network_id = "12532609583862916517"
 - Sepolia
@@ -117,8 +126,17 @@ else
 
 ~ no_connected_account
 
-Blockchain service: Please connect your wallet first
+Blockchain service: Please connect your Metamask wallet first
 => END!
+
+~ change_network
+Blockchain service: You are not in Avalanche Network currently which is require for this operation\nDo you wanto change?
+- Yes
+	do ask_change_network()
+	Blockchain service: Please let me know once you change the network
+	=> END!
+- No
+	=> cancel_operation
 
 ~ cancel_operation
 

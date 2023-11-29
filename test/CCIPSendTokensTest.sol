@@ -167,7 +167,7 @@ contract CCIPSendTokensTest is Test {
 
         IERC20(0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4).approve(address(ccipSendTokens), 10000000);
 
-        IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).approve(address(ccipSendTokens), fees * 2);
+        IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).approve(address(ccipSendTokens), fees + fees / 10);
 
         (bool revertCCIPSendTokens,) = address(ccipSendTokens).call(
             abi.encodeWithSignature(
@@ -208,7 +208,7 @@ contract CCIPSendTokensTest is Test {
 
         IERC20(0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4).approve(address(ccipSendTokens), 10000000);
 
-        IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).approve(address(ccipSendTokens), fees * 2);
+        IERC20(0xd00ae08403B9bbb9124bB305C09058E32C39A48c).approve(address(ccipSendTokens), fees + fees / 10);
 
         (bool revertCCIPSendTokens,) = address(ccipSendTokens).call(
             abi.encodeWithSignature(

@@ -17,10 +17,6 @@ pub fn score(
             .and(warp::body::json())
             .and_then(create_score)
             .or(warp::get()
-                .and(auth(tree))
-                .and(pool.clone())
-                .and_then(get_prizes))
-            .or(warp::get()
                 .and(pool)
                 .and(warp::path::param())
                 .and_then(get_score)),
@@ -33,9 +29,13 @@ pub fn prize(
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::path("prize").and(
         warp::put()
-            .and(auth(tree))
-            .and(pool)
+            .and(auth(tree.clone()))
+            .and(pool.clone())
             .and(warp::path::param())
-            .and_then(update_withdraw_prize),
+            .and_then(update_withdraw_prize)
+            .or(warp::get()
+                .and(auth(tree))
+                .and(pool.clone())
+                .and_then(get_prizes)),
     )
 }

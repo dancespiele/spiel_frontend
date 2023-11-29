@@ -9,8 +9,8 @@ func _ready():
 
 	draw_box(4, 5, -3, 6)
 
-	if !$Switch/Ball.screen_exited.is_connected($Switch/UserInterface/Lifes._on_life_lost.bind()):
-		$Switch/Ball.screen_exited.connect($Switch/UserInterface/Lifes._on_life_lost.bind());
+	if !$Switch/Ball.screen_exited.is_connected(_on_change_to_world.bind()):
+		$Switch/Ball.screen_exited.connect(_on_change_to_world.bind());
 
 	if !$Switch/UserInterface/Points.game_over.is_connected(_on_change_to_world.bind()):
 		$Switch/UserInterface/Points.game_over.connect(_on_change_to_world.bind())
