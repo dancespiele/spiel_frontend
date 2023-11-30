@@ -27,6 +27,9 @@ func store_token(token: String):
 func delete_token():
   localStorage.removeItem("auth_token")
 
+func get_token():
+  return localStorage.getItem("auth_token")
+
 func get_claims():
   var token = localStorage.getItem("auth_token")
 

@@ -4,19 +4,18 @@ signal started_packtingo
 
 var window := JavaScriptBridge.get_interface("window")
 var console := JavaScriptBridge.get_interface("console")
+var ethereum := JavaScriptBridge.get_interface("ethereum")
+var add_network_callback_ref = JavaScriptBridge.create_callback((Callable(self, "add_network_callback")))
 
 var list_price = ListPrice.new()
 var send_tokens = SendTokens.new()
 var destroy_box = DestroyBox.new()
 var avax_tokens = AvaxTokens.new()
 var utils = Utils.new()
+var chainId: String
 
 var is_account_connected := false
 var operation: String
-
-# func check_account_connection():
-# 	console.log(window.is_account_connected)
-# 	is_connected = window.is_account_connected
 
 func ask_for_price_list():
 	list_price.get_price_list()
@@ -46,3 +45,16 @@ func play_destroy_the_box():
 	operation = "destroy_box"
 	destroy_box.get_random_box()
 
+func ask_change_network():
+	Utils.checkOrswitchNetwork().catch(add_network_callback_ref)
+
+func add_network_callback(_args):
+	JavaScriptBridge.eval("window.addChainNetwork = {
+		method: 'wallet_addEthereumChain', params: [{
+			chainId: '0xa869',
+			chainName: 'Avalanche Fuji Testnet',
+			rpcUrls:['https://api.avax-test.network/ext/bc/C/rpc'],
+			blockExplorerUrls: ['https://testnet.snowtrace.io'],
+			nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: '18'}}]}")
+
+	ethereum.request(window.addChainNetwork)

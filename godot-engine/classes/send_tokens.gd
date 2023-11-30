@@ -21,7 +21,7 @@ var get_send_token_callback_ref := JavaScriptBridge.create_callback((Callable(se
 var network_id: String
 var wavax_token := "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token := "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
-var send_token_address := "0x7c6DBfBECdc3b54118F9e57F39aE884ef9e4D686"
+var send_token_address := "0x7FB00d4D6A29744812b198802c6466cD9D2b9EfD"
 var wallet_address: String
 var is_address := false
 var is_valid_amount := false

@@ -7,6 +7,7 @@ var ethereum = JavaScriptBridge.get_interface("ethereum")
 var console = JavaScriptBridge.get_interface("console")
 var window = JavaScriptBridge.get_interface("window")
 
+var add_network_callback_ref = JavaScriptBridge.create_callback((Callable(self, "add_network_callback")))
 var get_file_feed_price_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_feed_price_callback")))
 var get_file_send_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_send_token_callback")))
 var get_file_destroy_box_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_destroy_box_callback")))
@@ -24,7 +25,7 @@ var get_signer_callback_ref = JavaScriptBridge.create_callback(Callable(self, "g
 var get_signature_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signature_callback")))
 
 var feed_price_address: String = "0x275d6F77fC33FF5cb40c59e57dAAEB6fCc955082"
-var send_token_address: String = "0x7c6DBfBECdc3b54118F9e57F39aE884ef9e4D686"
+var send_token_address: String = "0x7FB00d4D6A29744812b198802c6466cD9D2b9EfD"
 var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
@@ -42,12 +43,24 @@ func _init():
 		window.BrowserProvider = ethers.BrowserProvider
 		provider = JavaScriptBridge.create_object("BrowserProvider", ethereum)
 		window.provider = provider
+		Utils.checkOrswitchNetwork().catch(add_network_callback_ref)
 
 func _ready():
 	var is_account_connected = check_account_connected()
 
 	if is_account_connected:
 		connect_request_callback(null)
+
+func add_network_callback(_args):
+	JavaScriptBridge.eval("window.addChainNetwork = {
+		method: 'wallet_addEthereumChain', params: [{
+			chainId: '0xa869',
+			chainName: 'Avalanche Fuji Testnet',
+			rpcUrls:['https://api.avax-test.network/ext/bc/C/rpc'],
+			blockExplorerUrls: ['https://testnet.snowtrace.io'],
+			nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: '18'}}]}")
+
+	ethereum.request(window.addChainNetwork)
 
 func check_account_connected():
 	var claims = auth.get_claims()

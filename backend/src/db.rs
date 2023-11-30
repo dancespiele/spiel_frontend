@@ -13,7 +13,7 @@ pub type Pool = StartPool<ConnectionManager<PgConnection>>;
 pub type PoolBoxed = Result<BoxedFilter<(Arc<Mutex<Pool>>,)>, Box<PgError>>;
 
 pub fn init_pool() -> PoolBoxed {
-    let url = env::var("URL_DB").expect("URL_DB");
+    let url = env::var("DATABASE_URL").expect("DATABASE_URL");
     let manager = ConnectionManager::<PgConnection>::new(url);
 
     let builder = Builder::new();

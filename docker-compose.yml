@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD}
+      POSTGRES_DB: spielcrypto
+    ports:
+      - "5432:5432"
+    volumes:
+      - spielcrypto_data:/var/lib/postgresql/data
+    user: postgres:postgres
+
+  migrations:
+    image: rust:latest
+    container_name: migrations
+    working_dir: /usr/src/migrations
+    depends_on:
+      - postgres
+    command: cargo run
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_DB_PASSWORD}@database:5432/spielcrypto
+    volumes:
+      - ./migrations:/usr/src/migrations
+
+  backend:
+    image: rust:latest
+    container_name: backend
+    working_dir: /usr/src/backend
+    command:  cargo run --release
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_DB_PASSWORD}@database:5432/spielcrypto
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}
+      SERVER_URL: 0.0.0.0:3100
+      SLED_URL: ${SLED_URL}
+      SECRET: ${SECRET}
+      ACTION_ADDRESS: ${ACTION_ADDRESS}
+      RUST_LOG: info 
+    ports:
+      - "3100:3100"
+    depends_on:
+      - migrations
+    volumes:
+      - ./backend:/usr/src/backend
+
+  frontend:
+    image: rust:latest
+    container_name: frontend
+    working_dir: /usr/src/frontend
+    command: cargo run --release
+    environment:
+      WEB_SERVER_URL: 0.0.0.0:3030
+      KEY_CERT: ${KEY_CERT}
+      FILE_CERT: ${FILE_CERT}
+      RUST_LOG: info
+    ports:
+      - "3030:3030"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/frontend
+
+volumes:
+  spielcrypto_data:
+    driver: local

@@ -22,7 +22,7 @@ use warp::{reject, reply, Rejection, Reply};
 		(status = 404, description = "Not found")
 	),
 	security(
-		("Authorization" = [])
+		("jwt_token" = ["write:items"])
 	)
   )]
 pub async fn create_score(
@@ -74,7 +74,7 @@ pub async fn create_score(
             })
         })?;
 
-    if score_body.score != 0 {
+    if score_body.score > 0 || score_body.score <= 4 {
         let prize_model: Prize = Prize::from((score_created.id.clone(), false));
 
         diesel::insert_into(prize)
@@ -92,7 +92,7 @@ pub async fn create_score(
 
 #[utoipa::path(
 	get,
-	path = "/price",
+	path = "/prize",
 	responses(
 		(status = 200, description = "Prizes without withdraw", body = [Vec<Prize>]),
 		(status = 500, description = "Database error"),
@@ -100,7 +100,7 @@ pub async fn create_score(
 		(status = 404, description = "Not found")
 	),
 	security(
-		("Authorization" = [])
+		("jwt_token" = ["read:items"])
 	)
   )]
 pub async fn get_prizes(
@@ -125,6 +125,7 @@ pub async fn get_prizes(
         })?;
 
     let prizes: Vec<Prize> = Prize::belonging_to(&score_models)
+        .filter(withdraw_prize.eq(false))
         .load::<Prize>(conn)
         .map_err(|err| {
             reject::custom(DbError {
@@ -142,7 +143,7 @@ pub async fn get_prizes(
 	),
     path = "/score/{score_id}",
     responses(
-		(status = 200, description = "Score got by account ID", body = [Vec<Prize>]),
+		(status = 200, description = "Score got by account ID", body = [Prize]),
 		(status = 500, description = "Database error"),
 		(status = 404, description = "Not found")
 	)
@@ -172,12 +173,12 @@ pub async fn get_score(pool: Arc<Mutex<Pool>>, score_id: String) -> Result<impl 
 }
 
 #[utoipa::path(
-    get,
+    put,
 	params(
 		("prize_id" = String, Path, description = "Prize id unique identifier"),
 	),
 	security(
-		("Authorization" = [])
+		("jwt_token" = ["edit:items"])
 	),
     path = "/prize/{prize_id}",
     responses(

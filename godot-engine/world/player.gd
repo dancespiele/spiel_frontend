@@ -53,6 +53,8 @@ func _unhandled_input(_event):
 		create_balloon()
 
 func create_balloon():
+	var ethereum := JavaScriptBridge.get_interface("ethereum")
+	State.chainId = ethereum.chainId
 	var balloon = Balloon.instantiate()
 	get_tree().current_scene.add_child(balloon)
 	balloon.start(resource, "main_menu")
