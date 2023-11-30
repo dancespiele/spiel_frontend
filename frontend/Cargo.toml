@@ -1,0 +1,12 @@
+[package]
+name = "webrender"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+warp={version="0.3.6", features = ["tls"]}
+tokio = {version="1.34.0", features = ["full"]}
+log="0.4.20"
+pretty_env_logger = "0.5.0"

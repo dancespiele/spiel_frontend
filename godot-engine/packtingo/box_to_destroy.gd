@@ -31,6 +31,11 @@ func send_score():
 	score_body)
 
 func destroy():
+	var parent = get_parent()
+	var ball = parent.find_child("Ball")
+	ball.game_state = 2
+	ball.reset_position()
+
 	win_game_label.show()
 	send_score()
 	await get_tree().create_timer(3).timeout

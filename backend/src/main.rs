@@ -25,6 +25,8 @@ use warp::Filter;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     pretty_env_logger::init();
 
+    let key_cert = env::var("KEY_CERT").expect("KEY_CERT must be set");
+    let file_cert = env::var("FILE_CERT").expect("FILE_CERT must be set");
     let server_url = env::var("SERVER_URL").expect("SERVER_URL must be set");
     let addr: SocketAddr = server_url.parse().unwrap();
     let tree = init_tree().expect("Failed to initialize sled");
@@ -54,7 +56,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .recover(error_handler)
         .with(cors);
 
-    warp::serve(routes).run(addr).await;
-
+    warp::serve(routes)
+    
+    .run(addr).await;
+        .tls()
+        .cert_path(&file_cert)
+        .key_path(&key_cert)
+        
     Ok(())
 }
