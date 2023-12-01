@@ -58,10 +58,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     warp::serve(routes)
     
-    .run(addr).await;
+    .run(addr)
         .tls()
         .cert_path(&file_cert)
         .key_path(&key_cert)
+        .await;
         
     Ok(())
 }
