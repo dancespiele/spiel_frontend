@@ -48,23 +48,6 @@ services:
     volumes:
       - ./backend:/usr/src/backend
 
-  frontend:
-    image: rust:latest
-    container_name: frontend
-    working_dir: /usr/src/frontend
-    command: cargo run --release
-    environment:
-      WEB_SERVER_URL: 0.0.0.0:3030
-      KEY_CERT: ${KEY_CERT_FRONTEND}
-      FILE_CERT: ${FILE_CERT_FRONTEND}
-      RUST_LOG: info
-    ports:
-      - "3030:3030"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/usr/src/frontend
-
 volumes:
   spielcrypto_data:
     driver: local
