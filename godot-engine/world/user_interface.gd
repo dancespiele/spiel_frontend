@@ -30,6 +30,8 @@ var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address: String = "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
+var server_path = OS.get_environment("GD_SERVER_URL")
+
 var message: String
 var signature: String
 var auth: Auth
@@ -141,12 +143,14 @@ func get_signer_callback(args):
 
 	var is_account_connected = check_account_connected()
 
+	var endpoint = "{server_path}/nonce/{address}".format({"address": window.signer.address, "server_path": server_path})
+
 	if !is_account_connected:
 		Utils.request(
 			self,
 			self._request_nonce_completed,
 			["Content-Type: application/json"],
-			"http://127.0.0.1:3100/nonce/{address}".format({"address": window.signer.address}),
+			endpoint,
 			HTTPClient.METHOD_GET,
 		)
 	else:
@@ -162,11 +166,13 @@ func get_signature_callback(args):
 	
 	var client_assertion = JSON.stringify({"signature": signature, "message": message})
 
+	var endpoint = "{server_path}/login".format({"server_path": server_path})	
+
 	Utils.request(
 		self,
 		self._request_login_completed,
 		["Content-Type: application/json"],
-		"http://127.0.0.1:3100/login",
+		endpoint,
 		HTTPClient.METHOD_POST,
 		client_assertion
 	)

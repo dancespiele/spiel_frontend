@@ -57,11 +57,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with(cors);
 
     warp::serve(routes)
-    
-    .run(addr).await;
         .tls()
         .cert_path(&file_cert)
         .key_path(&key_cert)
-        
+        .run(addr)
+        .await;
+
     Ok(())
 }

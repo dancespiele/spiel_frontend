@@ -38,7 +38,9 @@ services:
       SLED_URL: ${SLED_URL}
       SECRET: ${SECRET}
       ACTION_ADDRESS: ${ACTION_ADDRESS}
-      RUST_LOG: info 
+      RUST_LOG: info
+      KEY_CERT: ${KEY_CERT_BACKEND}
+      FILE_CERT: ${FILE_CERT_BACKEND}
     ports:
       - "3100:3100"
     depends_on:
@@ -52,12 +54,12 @@ services:
     working_dir: /usr/src/frontend
     command: cargo run --release
     environment:
-      WEB_SERVER_URL: 0.0.0.0:3030
-      KEY_CERT: ${KEY_CERT}
-      FILE_CERT: ${FILE_CERT}
+      WEB_SERVER_URL: 0.0.0.0:8080
+      KEY_CERT: ${KEY_CERT_FRONTEND}
+      FILE_CERT: ${FILE_CERT_FRONTEND}
       RUST_LOG: info
     ports:
-      - "3030:3030"
+      - "8080:8080"
     depends_on:
       - backend
     volumes:
