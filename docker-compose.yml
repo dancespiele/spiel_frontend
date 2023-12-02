@@ -59,7 +59,7 @@ services:
       FILE_CERT: ${FILE_CERT_FRONTEND}
       RUST_LOG: info
     ports:
-      - "8080:3030"
+      - "3030:3030"
     depends_on:
       - backend
     volumes:
