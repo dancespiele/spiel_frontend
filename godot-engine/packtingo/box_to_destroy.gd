@@ -24,9 +24,7 @@ func send_score():
 
 	var token = auth.get_token()
 
-	var gd_server_url := OS.get_environment("GD_SERVER_URL")
-
-	var endopoint := "{gd_server_url}/score".format({"gd_server_url": gd_server_url})
+	var endopoint := "https://spielcrypto.xzy:3100/score"
 
 	Utils.request(self, self._create_score_complete,
 	["Content-Type: application/json", "Authorization: {auth}".format({"auth": token})],
