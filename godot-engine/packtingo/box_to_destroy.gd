@@ -24,7 +24,7 @@ func send_score():
 
 	var token = auth.get_token()
 
-	var endopoint := "https://spielcrypto.xzy:3100/score"
+	var endopoint := "https://spielcrypto.xyz:3100/score"
 
 	Utils.request(self, self._create_score_complete,
 	["Content-Type: application/json", "Authorization: {auth}".format({"auth": token})],

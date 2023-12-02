@@ -142,7 +142,7 @@ func get_signer_callback(args):
 
 	var is_account_connected = check_account_connected()
 
-	var endpoint = "https://spielcrypto.xzy:3100/nonce/{address}".format({"address": window.signer.address})
+	var endpoint = "https://spielcrypto.xyz:3100/nonce/{address}".format({"address": window.signer.address})
 
 	if !is_account_connected:
 		Utils.request(
@@ -165,7 +165,7 @@ func get_signature_callback(args):
 	
 	var client_assertion = JSON.stringify({"signature": signature, "message": message})
 
-	var endpoint = "https://spielcrypto.xzy:3100/login"
+	var endpoint = "https://spielcrypto.xyz:3100/login"
 
 	Utils.request(
 		self,
