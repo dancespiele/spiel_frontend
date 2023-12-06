@@ -40,7 +40,7 @@ Blockchain service: Hello, What can I help you?
 ~ list_token_prices
 
 Blockchain service: 
-	LINK: {{list_price.prices.link}} AAVE: {{list_price.prices.aave}} BTC: {{list_price.prices.btc}}
+	LINK: {{list_price.prices.link}} AVAX: {{list_price.prices.aave}} BTC: {{list_price.prices.btc}}
 	ETH: {{list_price.prices.eth}} MATIC: {{list_price.prices.matic}} APE: {{list_price.prices.ape}}
 => END!
 
@@ -110,7 +110,7 @@ if utils.is_valid_amount
 	Blockchain service: Amount {{utils.amount_input}}!
 	do calc_fees()
 	do wait(2.0)
-	Blockchain service: You will pay this fees for the transaction (gas not included): {{send_tokens.fees}} AVAX
+	Blockchain service: You will pay this fees for the transaction (gas not included): {{send_tokens.fees}} WAVAX
 	Blockchain service: Do you want to continue?
 	- Yes
 		do ask_send_tokens()

@@ -1,4 +1,4 @@
-use super::dtos::{CreateScoreDto, GetScoreDto};
+use super::dtos::{CreateScoreDto, GetScoreDto, UpdatePrizeDto};
 use super::models::{Account, Prize, Score};
 use crate::db::Pool;
 use crate::error::{DbError, Forbidden};
@@ -75,7 +75,7 @@ pub async fn create_score(
         })?;
 
     if score_body.score > 0 || score_body.score <= 4 {
-        let prize_model: Prize = Prize::from((score_created.id.clone(), false));
+        let prize_model: Prize = Prize::from(score_created.id.clone());
 
         diesel::insert_into(prize)
             .values(prize_model)
@@ -174,6 +174,48 @@ pub async fn get_score(pool: Arc<Mutex<Pool>>, score_id: String) -> Result<impl 
 
 #[utoipa::path(
     put,
+    request_body = UpdatePrizeDto,
+	security(
+		("jwt_token" = ["edit:items"])
+	),
+    path = "/prize/{prize_id}/{request_id}",
+    responses(
+		(status = 200, description = "Request id set", body = [Vec<Prize>]),
+		(status = 500, description = "Database error"),
+		(status = 403, description = "Forbidden"),
+		(status = 404, description = "Not found")
+	)
+)]
+pub async fn update_request_id_prize(
+    session: SessionDto,
+    pool: Arc<Mutex<Pool>>,
+    prize_data: UpdatePrizeDto,
+) -> Result<impl Reply, Rejection> {
+    use crate::schema::prize::dsl::*;
+
+    if session.address != env::var("OWNER_ADDRESS").unwrap() {
+        return Err(reject::custom(Forbidden {
+            error: String::from("This address doesn't match with the action address"),
+        }));
+    }
+
+    let conn: &mut PgConnection = &mut pool.lock().await.get().unwrap();
+
+    diesel::update(prize)
+        .filter(id.eq(&prize_data.prize_id))
+        .set(request_id.eq(&prize_data.request_id))
+        .execute(conn)
+        .map_err(|err| {
+            reject::custom(DbError {
+                error: diesel::r2d2::Error::QueryError(err),
+            })
+        })?;
+
+    Ok(reply::json(&"Prize updated"))
+}
+
+#[utoipa::path(
+    put,
 	params(
 		("prize_id" = String, Path, description = "Prize id unique identifier"),
 	),
@@ -182,24 +224,18 @@ pub async fn get_score(pool: Arc<Mutex<Pool>>, score_id: String) -> Result<impl 
 	),
     path = "/prize/{prize_id}",
     responses(
-		(status = 200, description = "Score got by account ID", body = [Vec<Prize>]),
+		(status = 200, description = "Withdraw prize completed", body = [Vec<Prize>]),
 		(status = 500, description = "Database error"),
 		(status = 403, description = "Forbidden"),
 		(status = 404, description = "Not found")
 	)
 )]
 pub async fn update_withdraw_prize(
-    session: SessionDto,
+    _session: SessionDto,
     pool: Arc<Mutex<Pool>>,
     prize_id: String,
 ) -> Result<impl Reply, Rejection> {
     use crate::schema::prize::dsl::*;
-
-    if session.address != env::var("ACTION_ADDRESS").unwrap() {
-        return Err(reject::custom(Forbidden {
-            error: String::from("This address doesn't match with the action address"),
-        }));
-    }
 
     let conn: &mut PgConnection = &mut pool.lock().await.get().unwrap();
 

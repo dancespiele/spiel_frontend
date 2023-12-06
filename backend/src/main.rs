@@ -16,7 +16,7 @@ use db::{init_pool, init_tree};
 use docs::{api_doc, swagger_ui};
 use error::error_handler;
 use guard::{nonce, session_login};
-use packtingo::{prize, score};
+use packtingo::{prize, prize_requested, score};
 use std::env;
 use std::net::SocketAddr;
 use warp::Filter;
@@ -50,7 +50,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let routes = session_login(tree.clone())
         .or(nonce(tree.clone()))
         .or(score(tree.clone(), pool.clone()))
-        .or(prize(tree, pool))
+        .or(prize(tree.clone(), pool.clone()))
+        .or(prize_requested(tree, pool))
         .or(api_doc())
         .or(swagger_ui())
         .recover(error_handler)

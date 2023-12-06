@@ -1,3 +1,4 @@
+mod add_request_id_to_prize;
 mod change_score_column;
 mod create_account;
 mod create_prize;

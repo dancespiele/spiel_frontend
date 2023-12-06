@@ -19,6 +19,14 @@ pub struct GetScoreDto {
     withdraw_prize: bool,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize, ToSchema)]
+pub struct UpdatePrizeDto {
+    #[schema(example = "p-1wdkq")]
+    pub prize_id: String,
+    #[schema(example = "13445324255545")]
+    pub request_id: String,
+}
+
 impl From<SessionDto> for Account {
     fn from(session: SessionDto) -> Self {
         let uuid = format!("{}", uuid::Uuid::new_v4());
@@ -54,19 +62,19 @@ impl From<(String, CreateScoreDto)> for Score {
     }
 }
 
-impl From<(String, bool)> for Prize {
-    fn from(prize: (String, bool)) -> Self {
-        let (score_id, withdraw_prize) = prize;
+impl From<String> for Prize {
+    fn from(score_id: String) -> Self {
+        let uuid = format!("{}", uuid::Uuid::new_v4());
 
         Self {
             id: format!(
                 "pr-{}",
-                score_id
-                    .parse::<String>()
+                uuid.parse::<String>()
                     .expect("problem to pass to String from uuid format")
             ),
             score_id,
-            withdraw_prize,
+            withdraw_prize: false,
+            request_id: None,
             created_at: Utc::now().naive_utc(),
             updated_at: Utc::now().naive_utc(),
         }
