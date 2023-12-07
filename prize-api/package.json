@@ -4,7 +4,7 @@
   "description": "Api that manager prize functions",
   "main": "main.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "yarn tsc -p tsconfig.build.json",
     "lint": "eslint ./",
     "clean": "rm -rf ./dist/ ./doc/ ./.nyc_output",
     "lint:fix": "yarn run lint -- --fix",
