@@ -403,3 +403,5 @@ circuits
 *.tgz
 .yalc*
 .env*
+cert.pem
+key.pem

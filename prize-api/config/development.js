@@ -13,6 +13,7 @@ module.exports = {
   OWNER: process.env.OWNER,
   server: {
     hostname: process.env.HOSTNAME,
+    port: process.env.PORT,
   },
   src: {
     root: 'dist',
