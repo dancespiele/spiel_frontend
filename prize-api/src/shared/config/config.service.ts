@@ -23,9 +23,6 @@ const DOTENV_SCHEMA = Joi.object({
   }),
   RPC_URL: Joi.string().uri().required().error(new Error('RPC_URL is required!')),
   SEED_WORDS: Joi.string().required().error(new Error('SEED_WORDS are required!')),
-  PRIZE_CONTRACT_ADDRESS: Joi.string()
-    .required()
-    .error(new Error('PRIZE_CONTRACT_ADDRESS is required!')),
   CONSUMER_ADDRESS: Joi.string().required().error(new Error('CONSUMER_ADDRESS is required')),
   LINK_ADDRESS: Joi.string().required().error(new Error('LINK_ADDRESS is required')),
   ROUTER_ADDRESS: Joi.string().required().error(new Error('ROUTER_ADDRESS is required')),
@@ -47,7 +44,6 @@ type DotenvSchemaKeys =
   | 'JWT_SECRET_KEY'
   | 'JWT_EXPIRY_KEY'
   | 'RPC_URL'
-  | 'PRIZE_CONTRACT_ADDRESS'
   | 'SEED_WORDS'
   | 'CONSUMER_ADDRESS'
   | 'LINK_ADDRESS'

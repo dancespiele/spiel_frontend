@@ -45,7 +45,7 @@ export class PrizeService {
     const wallet = this.getWallet()
 
     const contract = new ethers.Contract(
-      this.configService.get('PRIZE_CONTRACT_ADDRESS'),
+      this.configService.get('CONSUMER_ADDRESS'),
       RequestPrizeContract.abi,
       wallet,
     )

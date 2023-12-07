@@ -3,6 +3,6 @@
   "compilerOptions": {
     "noUnusedLocals": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.factory.ts", "**/*.seed.ts", "**/*.mock.ts"]
 }

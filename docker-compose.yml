@@ -59,11 +59,38 @@ services:
       FILE_CERT: ${FILE_CERT_FRONTEND}
       RUST_LOG: info
     ports:
-      - "8080:3030"
+      - "3030:3030"
     depends_on:
       - backend
     volumes:
       - ./frontend:/usr/src/frontend
+
+  prize-api:
+    image: node:latest
+    container_name: prize-api
+    working_dir: /usr/src/prize-api
+    command: npm run start
+    environment:
+      ROUTER_ADDRESS: ${ROUTER_ADDRESS} 
+      GATEWAY_URLS: ${GATEWAY_URLS}
+      SUBSCRIPTION_ID: ${SUBSCRIPTION_ID}
+      SERVER_URL: ${SERVER_URL}
+      PRIZE_CONTRACT_ADDRESS: ${PRIZE_CONTRACT_ADDRESS} 
+      LINK_ADDRESS: ${LINK_ADDRESS}
+      OWNER: ${OWNER}
+      CONSUMER_ADDRESS: ${CONSUMER_ADDRESS}
+      RPC_URL: ${RPC_URL}
+      SEED_WORDS: ${SEED_WORDS}
+      SECRET: ${SECRET} 
+      DON_ID: ${DON_ID}
+      NODE_ENV: production
+    ports:
+      - "3200:3200"
+    depends_on:
+      - backend
+    volumes:
+      - ./prize-api:/usr/src/prize-api
+
 
 volumes:
   spielcrypto_data:
