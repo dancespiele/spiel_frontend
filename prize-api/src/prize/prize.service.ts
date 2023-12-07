@@ -21,6 +21,10 @@ export class PrizeService {
     private readonly httpServer: HttpService,
   ) {}
 
+  getOwner() {
+    return this.configService.get<string>('OWNER')
+  }
+
   getProvider() {
     const provider = new ethers.providers.JsonRpcProvider(this.configService.get('RPC_URL'))
 

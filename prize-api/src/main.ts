@@ -6,7 +6,6 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import { ApplicationModule } from './app.module'
 import { JwtAuthGuard } from './common/guards/auth/jwt-auth.guard'
-import { RolesGuard } from './common/guards/auth/roles.guards'
 import { ConfigService } from './shared/config/config.service'
 import morgan from 'morgan'
 
@@ -30,7 +29,7 @@ const bootstrap = async () => {
 
   app.enable('trust proxy')
   app.useGlobalPipes(new ValidationPipe())
-  app.useGlobalGuards(new JwtAuthGuard(new Reflector()), new RolesGuard(new Reflector()))
+  app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
 
   const PORT = app.get<ConfigService>(ConfigService).get<number>('server.port')
 
@@ -50,7 +49,7 @@ const bootstrap = async () => {
     .build()
   const document = SwaggerModule.createDocument(app, options)
 
-  SwaggerModule.setup('api/v1/docs', app, document)
+  SwaggerModule.setup('api/docs', app, document)
 
   await app.listen(PORT)
   Logger.log({

@@ -1,4 +1,12 @@
-import { Controller, Post, Body, InternalServerErrorException, Req, Logger } from '@nestjs/common'
+import {
+  Controller,
+  Post,
+  Body,
+  InternalServerErrorException,
+  Req,
+  Logger,
+  ForbiddenException,
+} from '@nestjs/common'
 import {
   ApiTags,
   ApiResponse,
@@ -9,6 +17,7 @@ import {
 } from '@nestjs/swagger'
 import { CreateScoreDto } from './dtos/create-score.dto'
 import { PrizeService } from './prize.service'
+import { User } from '../common/decorators/user.decorator'
 
 @ApiTags('Widget')
 @Controller()
@@ -39,8 +48,11 @@ export class PrizeController {
     status: 404,
     description: 'Not found',
   })
-  async setElegibleAccount(@Body() scoreData: CreateScoreDto, @Req() req: Request) {
+  async setElegibleAccount(@Body() scoreData: CreateScoreDto, @User() user, @Req() req: Request) {
     try {
+      if (user.address !== this.prizeService.getOwner()) {
+        throw new ForbiddenException('Only owner can set account as elegible')
+      }
       const token = req.headers['authorization']
       const { requestId, score, withdraw_prize, prize_id } =
         await this.prizeService.checkElegibleAccount(scoreData.account, scoreData.scoreId, token)

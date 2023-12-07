@@ -27,11 +27,12 @@ const DOTENV_SCHEMA = Joi.object({
     .required()
     .error(new Error('PRIZE_CONTRACT_ADDRESS is required!')),
   CONSUMER_ADDRESS: Joi.string().required().error(new Error('CONSUMER_ADDRESS is required')),
-  LINK_ADDRESS: Joi.string().uri().required().error(new Error('LINK_ADDRESS is required')),
-  ROUTER_ADDRESS: Joi.string().uri().required().error(new Error('ROUTER_ADDRESS is required')),
+  LINK_ADDRESS: Joi.string().required().error(new Error('LINK_ADDRESS is required')),
+  ROUTER_ADDRESS: Joi.string().required().error(new Error('ROUTER_ADDRESS is required')),
   DON_ID: Joi.string().required().error(new Error('DON_ID is required!')),
   GATEWAY_URLS: Joi.array().required().error(new Error('GATEWAY_URLS are required!')),
-  BACKEND_URL: Joi.string().uri().required().error(new Error('BACKEND_URL is required!')),
+  BACKEND_URL: Joi.string().required().error(new Error('BACKEND_URL is required!')),
+  OWNER: Joi.string().required().error(new Error('OWNER is required!')),
   SUBSCRIPTION_ID: Joi.string().required().error(new Error('SUBSCRIPTION_ID is required!')),
   security: Joi.object({
     enableHttpsRedirect: Joi.bool().default(false),
@@ -53,6 +54,7 @@ type DotenvSchemaKeys =
   | 'ROUTER_ADDRESS'
   | 'GATEWAY_URLS'
   | 'BACKEND_URL'
+  | 'OWNER'
   | 'DON_ID'
   | 'SUBSCRIPTION_ID'
   | 'security.enableHttpsRedirect'
