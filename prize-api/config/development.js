@@ -11,6 +11,7 @@ module.exports = {
   GATEWAY_URLS: process.env.GATEWAY_URLS?.split(','),
   BACKEND_URL: process.env.BACKEND_URL,
   SUBSCRIPTION_ID: process.env.SUBSCRIPTION_ID,
+  OWNER: process.env.OWNER,
   server: {
     port: process.env.PORT || 8030,
   },
