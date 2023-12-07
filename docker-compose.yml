@@ -69,7 +69,7 @@ services:
     image: node:latest
     container_name: prize-api
     working_dir: /usr/src/prize-api
-    command: yarn && yarn start
+    command: bash -c "yarn && yarn start"
     environment:
       ROUTER_ADDRESS: ${ROUTER_ADDRESS} 
       GATEWAY_URLS: ${GATEWAY_URLS}
