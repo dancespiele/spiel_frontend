@@ -19,7 +19,7 @@ const DOTENV_SCHEMA = Joi.object({
   JWT_SECRET_KEY: Joi.string().required().error(new Error('SECRET is required!')),
   JWT_EXPIRY_KEY: Joi.string().default('24h'),
   server: Joi.object({
-    hostname: Joi.number().default('127.0.0.1:3200'),
+    hostname: Joi.string().default('127.0.0.1:3200'),
   }),
   RPC_URL: Joi.string().uri().required().error(new Error('RPC_URL is required!')),
   SEED_WORDS: Joi.string().required().error(new Error('SEED_WORDS are required!')),
