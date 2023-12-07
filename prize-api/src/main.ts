@@ -31,7 +31,7 @@ const bootstrap = async () => {
   app.useGlobalPipes(new ValidationPipe())
   app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
 
-  const PORT = app.get<ConfigService>(ConfigService).get<number>('server.port')
+  const HOSTNAME = app.get<ConfigService>(ConfigService).get<number>('server.hostname')
 
   const packageJsonPath = path.join(__dirname, '..', 'package.json')
   const packageJsonString = readFileSync(packageJsonPath, 'utf8')
@@ -51,11 +51,10 @@ const bootstrap = async () => {
 
   SwaggerModule.setup('api/docs', app, document)
 
-  await app.listen(PORT)
+  await app.listen(HOSTNAME)
   Logger.log({
     message: `server version ${packageJson.version} started!`,
-    port: PORT,
-    url: `http://localhost:${PORT}/api`,
+    url: HOSTNAME,
   })
 }
 
