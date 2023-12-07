@@ -12,7 +12,7 @@ module.exports = {
   SUBSCRIPTION_ID: process.env.SUBSCRIPTION_ID,
   OWNER: process.env.OWNER,
   server: {
-    port: process.env.PORT || 3200,
+    hostname: process.env.HOSTNAME,
   },
   src: {
     root: 'dist',
