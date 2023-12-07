@@ -1,0 +1,14 @@
+~ get_prize
+
+Box prize: Here are your prizes to mint:
+while prize_index < prizes.size()
+	Box prize: Prize {{prize_index + 1}}
+	- Take
+		do get_prize(prize_index)
+		=> END
+	- Later
+		Box prize: The prize {{prize_index + 1}} will keep here to be minted 
+		=> END
+	set prize_index += 1
+	
+END

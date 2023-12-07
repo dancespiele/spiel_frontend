@@ -7,7 +7,8 @@ var target_velocity= Vector3.ZERO
 var fall_acceleration= 75.0
 @onready var dialogue_bot: DialogueLabel = $DialogueBot
 @onready var actionable_finder: Area3D = $Direction/ActionableFinder
-@onready var resource = load("res://dialogue/bot_service.dialogue") as DialogueResource
+@onready var bot_resource = load("res://dialogue/bot_service.dialogue") as DialogueResource
+@onready var prize_box_resource = load("res://dialogue/prize.dialogue") as DialogueResource
 var address: String
 
 const Balloon = preload("res://dialogue/balloon.tscn")
@@ -47,14 +48,19 @@ func _physics_process(delta):
 	move_and_slide()
 
 func _unhandled_input(_event):
-	var actionable = actionable_finder.get_overlapping_areas()
+	var bodies = actionable_finder.get_overlapping_bodies()
+	for body in bodies:
+		if body.name == "Bot" and Input.is_action_pressed("dialogue"):
+			create_balloon("main_menu", bot_resource)
+		if body.name == "PrizeBox" and Input.is_action_pressed("dialogue"):
+			create_balloon("get_prize", prize_box_resource)
 
-	if actionable.size() > 0 and Input.is_action_pressed("dialogue"):
-		create_balloon()
 
-func create_balloon():
+		
+
+func create_balloon(title: String, resource):
 	var ethereum := JavaScriptBridge.get_interface("ethereum")
 	State.chainId = ethereum.chainId
 	var balloon = Balloon.instantiate()
 	get_tree().current_scene.add_child(balloon)
-	balloon.start(resource, "main_menu")
+	balloon.start(resource, title)

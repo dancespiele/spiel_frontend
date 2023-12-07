@@ -11,11 +11,13 @@ var list_price = ListPrice.new()
 var send_tokens = SendTokens.new()
 var destroy_box = DestroyBox.new()
 var avax_tokens = AvaxTokens.new()
+var prize_box = GetPrize.new()
 var utils = Utils.new()
 var chainId: String
-
 var is_account_connected := false
 var operation: String
+var prize_index = 0
+var prizes: Array
 
 func ask_for_price_list():
 	list_price.get_price_list()
@@ -44,6 +46,9 @@ func ask_send_tokens():
 func play_destroy_the_box():
 	operation = "destroy_box"
 	destroy_box.get_random_box()
+
+func get_prize(index: int):
+	prize_box.get_prize(prizes[index])
 
 func ask_change_network():
 	Utils.checkOrswitchNetwork().catch(add_network_callback_ref)

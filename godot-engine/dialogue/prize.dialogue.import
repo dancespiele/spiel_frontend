@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_11"
+type="Resource"
+uid="uid://4fy3c0gtt6ot"
+path="res://.godot/imported/prize.dialogue-8980c3c0a592b436dfed611ac117f1ce.tres"
+
+[deps]
+
+source_file="res://dialogue/prize.dialogue"
+dest_files=["res://.godot/imported/prize.dialogue-8980c3c0a592b436dfed611ac117f1ce.tres"]
+
+[params]
+
+defaults=true

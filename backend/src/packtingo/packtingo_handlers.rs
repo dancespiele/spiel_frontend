@@ -3,7 +3,7 @@ use super::models::{Account, Prize, Score};
 use crate::db::Pool;
 use crate::error::{DbError, Forbidden};
 use crate::guard::SessionDto;
-use crate::schema::prize::withdraw_prize;
+use crate::schema::prize::{request_id, withdraw_prize};
 use diesel::prelude::*;
 use std::env;
 use std::sync::Arc;
@@ -125,7 +125,7 @@ pub async fn get_prizes(
         })?;
 
     let prizes: Vec<Prize> = Prize::belonging_to(&score_models)
-        .filter(withdraw_prize.eq(false))
+        .filter(withdraw_prize.eq(false).and(request_id.is_not_null()))
         .load::<Prize>(conn)
         .map_err(|err| {
             reject::custom(DbError {
