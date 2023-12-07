@@ -87,7 +87,7 @@ export class PrizeService {
     const donId = this.configService.get<string>('DON_ID')
     const subscriptionId = this.configService.get<string>('SUBSCRIPTION_ID')
     const source = this.getFunction()
-    const args = [scoreId, `https://${this.configService.get('BACKEND_URL')}`]
+    const args = [scoreId, this.configService.get('BACKEND_URL')]
     const contract = this.getContract()
 
     const expirationTimeMinutes = 1440
