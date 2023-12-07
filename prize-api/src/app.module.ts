@@ -12,7 +12,6 @@ import { APP_GUARD, RouterModule } from '@nestjs/core'
 @Module({
   imports: [
     RouterModule.register(routes),
-    ConfigModule,
     PrizeModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -24,6 +23,7 @@ import { APP_GUARD, RouterModule } from '@nestjs/core'
         }
       },
     }),
+    ConfigModule,
   ],
   providers: [
     JwtStrategy,

@@ -11,10 +11,11 @@ import {
   FunctionsResponse,
 } from '@chainlink/functions-toolkit'
 import { PrizeResult } from 'src/common/type'
-import { Logger } from '@nestjs/common'
+import { Logger, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
 
+@Injectable()
 export class PrizeService {
   constructor(
     private readonly configService: ConfigService,
@@ -86,7 +87,7 @@ export class PrizeService {
     const donId = this.configService.get<string>('DON_ID')
     const subscriptionId = this.configService.get<string>('SUBSCRIPTION_ID')
     const source = this.getFunction()
-    const args = [scoreId, this.configService.get('BACKEND_URL')]
+    const args = [scoreId, `https://${this.configService.get('BACKEND_URL')}`]
     const contract = this.getContract()
 
     const expirationTimeMinutes = 1440
@@ -169,8 +170,9 @@ export class PrizeService {
     }
 
     const decodedResult = decodeResult(response.responseBytesHexstring, ReturnType.string)
+    const decodeResultString = decodedResult.toString()
 
-    const result = JSON.parse(decodedResult.toString())
+    const result = JSON.parse(decodeResultString)
 
     return { requestId: response.requestId, ...result }
   }

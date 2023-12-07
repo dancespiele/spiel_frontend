@@ -7,14 +7,7 @@ import {
   Logger,
   ForbiddenException,
 } from '@nestjs/common'
-import {
-  ApiTags,
-  ApiResponse,
-  ApiOperation,
-  ApiParam,
-  ApiBearerAuth,
-  ApiBody,
-} from '@nestjs/swagger'
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger'
 import { CreateScoreDto } from './dtos/create-score.dto'
 import { PrizeService } from './prize.service'
 import { User } from '../common/decorators/user.decorator'
@@ -32,10 +25,6 @@ export class PrizeController {
   @ApiBody({
     type: CreateScoreDto,
   })
-  @ApiParam({
-    description: 'did of the asset',
-    name: 'did',
-  })
   @ApiResponse({
     status: 200,
     description: '',
@@ -48,12 +37,12 @@ export class PrizeController {
     status: 404,
     description: 'Not found',
   })
-  async setElegibleAccount(@Body() scoreData: CreateScoreDto, @User() user, @Req() req: Request) {
+  async setElegibleAccount(@Body() scoreData: CreateScoreDto, @User() user, @Req() req: any) {
     try {
-      if (user.address !== this.prizeService.getOwner()) {
+      if (user.address.toLowerCase() !== this.prizeService.getOwner().toLowerCase()) {
         throw new ForbiddenException('Only owner can set account as elegible')
       }
-      const token = req.headers['authorization']
+      const token = req.headers['authorization'].replace('Bearer ', '')
       const { requestId, score, withdraw_prize, prize_id } =
         await this.prizeService.checkElegibleAccount(scoreData.account, scoreData.scoreId, token)
 
