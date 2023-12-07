@@ -19,7 +19,8 @@ const DOTENV_SCHEMA = Joi.object({
   JWT_SECRET_KEY: Joi.string().required().error(new Error('SECRET is required!')),
   JWT_EXPIRY_KEY: Joi.string().default('24h'),
   server: Joi.object({
-    hostname: Joi.number().default('127.0.0.1:3200'),
+    hostname: Joi.string().default('127.0.0.1'),
+    port: Joi.number().default(3200),
   }),
   RPC_URL: Joi.string().uri().required().error(new Error('RPC_URL is required!')),
   SEED_WORDS: Joi.string().required().error(new Error('SEED_WORDS are required!')),
@@ -41,6 +42,7 @@ const DOTENV_SCHEMA = Joi.object({
 type DotenvSchemaKeys =
   | 'NODE_ENV'
   | 'server.hostname'
+  | 'server.port'
   | 'JWT_SECRET_KEY'
   | 'JWT_EXPIRY_KEY'
   | 'RPC_URL'

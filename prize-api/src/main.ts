@@ -14,6 +14,10 @@ const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(ApplicationModule, {
     cors: true,
     logger: ['error', 'log', 'warn', 'debug'],
+    httpsOptions: {
+      key: readFileSync(path.join(__dirname, '..', 'key.pem')),
+      cert: readFileSync(path.join(__dirname, '..', 'cert.pem')),
+    },
   })
 
   // http middleware logger
@@ -31,7 +35,8 @@ const bootstrap = async () => {
   app.useGlobalPipes(new ValidationPipe())
   app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
 
-  const HOSTNAME = app.get<ConfigService>(ConfigService).get<number>('server.hostname')
+  const HOSTNAME = app.get<ConfigService>(ConfigService).get<string>('server.hostname')
+  const PORT = app.get<ConfigService>(ConfigService).get<number>('server.port')
 
   const packageJsonPath = path.join(__dirname, '..', 'package.json')
   const packageJsonString = readFileSync(packageJsonPath, 'utf8')
@@ -51,10 +56,8 @@ const bootstrap = async () => {
 
   SwaggerModule.setup('api/docs', app, document)
 
-  await app.listen(HOSTNAME)
-  Logger.log({
-    message: `server version ${packageJson.version} started!`,
-    url: HOSTNAME,
+  await app.listen(PORT, HOSTNAME, () => {
+    Logger.log(`Server running on https://${HOSTNAME}:${PORT}`)
   })
 }
 
