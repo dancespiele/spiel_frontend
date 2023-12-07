@@ -39,3 +39,16 @@ pub fn prize(
                 .and_then(get_prizes)),
     )
 }
+
+pub fn prize_requested(
+    tree: impl Filter<Extract = (Arc<Mutex<Db>>,), Error = Rejection> + Clone + Send,
+    pool: impl Filter<Extract = (Arc<Mutex<Pool>>,), Error = Rejection> + Clone + Send,
+) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
+    warp::path("prize_requested").and(
+        warp::put()
+            .and(auth(tree.clone()))
+            .and(pool.clone())
+            .and(warp::body::json())
+            .and_then(update_request_id_prize),
+    )
+}

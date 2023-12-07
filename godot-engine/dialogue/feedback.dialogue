@@ -33,3 +33,6 @@ Blockchain service: Sign the contract in order to generate the box to destroy [n
 
 Blockchain service: The game will start in [b]30 seconds[/b], the time to generate the box to destroy [next=2.0]
 => END
+
+~ prize_minted
+Box prize: Prize already [url="https://testnet.snowtrace.io/tx/{{prize_box.tx_hash}}"][color=#108DC9][u]minted[/u][/color][/url] [next=2.0]

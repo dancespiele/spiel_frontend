@@ -10,6 +10,7 @@ var window = JavaScriptBridge.get_interface("window")
 var add_network_callback_ref = JavaScriptBridge.create_callback((Callable(self, "add_network_callback")))
 var get_file_feed_price_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_feed_price_callback")))
 var get_file_send_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_send_token_callback")))
+var get_request_prize_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_request_prize_callback")));
 var get_file_destroy_box_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_destroy_box_callback")))
 var get_file_feed_price_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_feed_price_json_callback")))
 var get_file_destroy_box_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_destroy_box_json_callback")))
@@ -20,6 +21,7 @@ var get_wavax_token_callback_ref = JavaScriptBridge.create_callback((Callable(se
 var get_wavax_token_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_wavax_token_json_callback")))
 var get_link_token_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_link_token_callback")))
 var get_link_token_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_link_token_json_callback")))
+var get_request_prize_json_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_request_prize_json_callback")))
 var connect_request_callback_ref = JavaScriptBridge.create_callback(Callable(self, "connect_request_callback"))
 var get_signer_callback_ref = JavaScriptBridge.create_callback(Callable(self, "get_signer_callback"))
 var get_signature_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_signature_callback")))
@@ -28,6 +30,7 @@ var feed_price_address: String = "0x275d6F77fC33FF5cb40c59e57dAAEB6fCc955082"
 var send_token_address: String = "0x7FB00d4D6A29744812b198802c6466cD9D2b9EfD"
 var wavax_token_address: String = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"
 var game_token_address: String = "0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4"
+var request_prize_address: String = "0x6f3b2f5FA9cccA99fe922975E96F509eB5cF3345"
 var link_token_address: String = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address: String = "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
 
@@ -78,6 +81,7 @@ func get_file_data():
 	window.fetch("/public/contracts/WAVAX.json").then(get_wavax_token_callback_ref)
 	window.fetch("/public/contracts/LinkTokenInterface.json").then(get_link_token_callback_ref)
 	window.fetch("/public/contracts/DestroyBox.json").then(get_file_destroy_box_callback_ref)
+	window.fetch("/public/contracts/RequestPrize.json").then(get_request_prize_callback_ref)
 
 func get_file_feed_price_callback(args):
 	args[0].json().then(get_file_feed_price_json_callback_ref)
@@ -93,6 +97,9 @@ func get_wavax_token_callback(args):
 
 func get_link_token_callback(args):
 	args[0].json().then(get_link_token_json_callback_ref)
+
+func get_request_prize_callback(args):
+	args[0].json().then(get_request_prize_json_callback_ref)
 
 func get_file_destroy_box_callback(args):
 	args[0].json().then(get_file_destroy_box_json_callback_ref)
@@ -116,6 +123,10 @@ func get_wavax_token_json_callback(args):
 func get_link_token_json_callback(args):
 	var link_token_contract = JavaScriptBridge.create_object("Contract", link_token_address, args[0].abi, provider)
 	window.link_token_contract = link_token_contract
+
+func get_request_prize_json_callback(args):
+	var request_prize_contract = JavaScriptBridge.create_object("Contract", request_prize_address, args[0].abi, provider)
+	window.request_prize_contract = request_prize_contract
 
 func get_file_destroy_box_json_callback(args):
 	var destroy_box_contract = JavaScriptBridge.create_object("Contract", destroy_box_address, args[0].abi, provider)
@@ -142,7 +153,7 @@ func get_signer_callback(args):
 
 	var is_account_connected = check_account_connected()
 
-	var endpoint = "https://spielcrypto.xzy:3100/nonce/{address}".format({"address": window.signer.address})
+	var endpoint = "https://spielcrypto.xyz:3100/nonce/{address}".format({"address": window.signer.address})
 
 	if !is_account_connected:
 		Utils.request(
@@ -154,6 +165,8 @@ func get_signer_callback(args):
 		)
 	else:
 		$WalletConnect.set_text(Utils.shortWalletAddress(window.signer.address))
+		var token = auth.get_token()
+		check_prizes(token)
 
 func _request_nonce_completed(_result, _response_code, _headers, body):
 	var response = JSON.parse_string(body.get_string_from_utf8())
@@ -165,7 +178,7 @@ func get_signature_callback(args):
 	
 	var client_assertion = JSON.stringify({"signature": signature, "message": message})
 
-	var endpoint = "https://spielcrypto.xzy:3100/login"
+	var endpoint = "https://spielcrypto.xyz:3100/login"
 
 	Utils.request(
 		self,
@@ -183,6 +196,31 @@ func _request_login_completed(_result, _response_code, _headers, body):
 	State.is_account_connected = true
 
 	$WalletConnect.set_text(Utils.shortWalletAddress(window.signer.address))
+
+	check_prizes(response)
+
+func check_prizes(token: String):
+	var endpoint = "https://spielcrypto.xyz:3100/prize";
+
+	Utils.request(
+		self,
+		self._request_prize_completed,
+		["Content-Type: application/json", "Authorization: {auth}".format({"auth": token})],
+		endpoint,
+		HTTPClient.METHOD_GET,
+	)
+
+func _request_prize_completed(_result, _response_code, _headers, body):
+	var response = JSON.parse_string(body.get_string_from_utf8())
+
+	if response.size() > 0:
+		State.prizes = response
+
+		var prize_box = preload("res://world/prize_box.tscn").instantiate()
+		var parent = get_parent()
+		parent.add_child(prize_box)
+		prize_box.position = Vector3(-71.501, 5.55966, -8.50782)
+		console.log("Created")
 
 func setAddress(addr: String):
 	$WalletConnect.set_text(Utils.shortWalletAddress(addr))

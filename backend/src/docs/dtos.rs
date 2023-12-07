@@ -16,6 +16,7 @@ use utoipa::{
         packtingo::packtingo_handlers::get_prizes,
         packtingo::packtingo_handlers::get_score,
         packtingo::packtingo_handlers::update_withdraw_prize,
+        packtingo::packtingo_handlers::update_request_id_prize,
     ),
     components(schemas(
         guard::dtos::SignatureDto,

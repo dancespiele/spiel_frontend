@@ -2,7 +2,8 @@ extends Node
 
 
 const DialogueConstants = preload("../constants.gd")
-const DialogueSettings = preload("./settings.gd")
+const DialogueSettings = preload("../settings.gd")
+const DialogueManagerParseResult = preload("./parse_result.gd")
 
 
 # Keeps track of errors and dependencies.
@@ -24,6 +25,20 @@ func _ready() -> void:
 	_update_dependency_timer.timeout.connect(_on_update_dependency_timeout)
 
 	_build_cache()
+
+
+func reimport_files(files: PackedStringArray = []) -> void:
+	if files.is_empty(): files = get_files()
+
+	var file_system: EditorFileSystem = Engine.get_meta("DialogueManagerPlugin") \
+		.get_editor_interface() \
+		.get_resource_filesystem()
+
+	# NOTE: Godot 4.2rc1 has an issue with reimporting more than one
+	# file at a time so we do them one by one
+	for file in files:
+		file_system.reimport_files([file])
+		await get_tree().create_timer(0.2)
 
 
 ## Add a dialogue file to the cache.
@@ -81,9 +96,11 @@ func queue_updating_dependencies(of_path: String) -> void:
 
 ## Update any references to a file path that has moved
 func move_file_path(from_path: String, to_path: String) -> void:
-	if _cache.has(from_path):
+	if not _cache.has(from_path): return
+
+	if to_path != "":
 		_cache[to_path] = _cache[from_path].duplicate()
-		_cache.erase(from_path)
+	_cache.erase(from_path)
 
 
 ## Get any dialogue files that import a given path.

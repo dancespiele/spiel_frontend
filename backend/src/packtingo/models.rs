@@ -30,6 +30,10 @@ pub struct Prize {
     pub score_id: String,
     #[schema(example = false)]
     pub withdraw_prize: bool,
+    #[schema(example = "2020-01-01 00:00:00")]
     pub created_at: NaiveDateTime,
+    #[schema(example = "2020-01-01 00:00:00")]
     pub updated_at: NaiveDateTime,
+    #[schema(example = "134455335")]
+    pub request_id: Option<String>,
 }

@@ -5,7 +5,7 @@ extends EditorPlugin
 const DialogueConstants = preload("./constants.gd")
 const DialogueImportPlugin = preload("./import_plugin.gd")
 const DialogueTranslationParserPlugin = preload("./editor_translation_parser_plugin.gd")
-const DialogueSettings = preload("./components/settings.gd")
+const DialogueSettings = preload("./settings.gd")
 const DialogueCache = preload("./components/dialogue_cache.gd")
 const MainView = preload("./views/main_view.tscn")
 
@@ -101,6 +101,13 @@ func _apply_changes() -> void:
 
 
 func _build() -> bool:
+	# If this is the dotnet Godot then we need to check if the solution file exists
+	if ProjectSettings.has_setting("dotnet/project/solution_directory"):
+		var directory: String = ProjectSettings.get("dotnet/project/solution_directory")
+		var file_name: String = ProjectSettings.get("dotnet/project/assembly_name")
+		var has_dotnet_solution: bool = FileAccess.file_exists("res://%s/%s.sln" % [directory, file_name])
+		DialogueSettings.set_setting("has_dotnet_solution", has_dotnet_solution)
+
 	# Ignore errors in other files if we are just running the test scene
 	if DialogueSettings.get_user_value("is_running_test_scene", true): return true
 
@@ -134,8 +141,11 @@ func update_import_paths(from_path: String, to_path: String) -> void:
 
 	# Reopen the file if it's already open
 	if main_view.current_file_path == from_path:
-		main_view.current_file_path = ""
-		main_view.open_file(to_path)
+		if to_path == "":
+			main_view.close_file(from_path)
+		else:
+			main_view.current_file_path = ""
+			main_view.open_file(to_path)
 
 	# Update any other files that import the moved file
 	var dependents = dialogue_cache.get_files_with_dependency(from_path)
@@ -234,6 +244,6 @@ func _on_files_moved(old_file: String, new_file: String) -> void:
 
 
 func _on_file_removed(file: String) -> void:
-	update_import_paths(file, "?")
+	update_import_paths(file, "")
 	if is_instance_valid(main_view):
 		main_view.close_file(file)

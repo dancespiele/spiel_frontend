@@ -14,6 +14,7 @@ table! {
       withdraw_prize -> Bool,
       created_at -> Timestamp,
       updated_at -> Timestamp,
+      request_id -> Nullable<Varchar>
   }
 }
 

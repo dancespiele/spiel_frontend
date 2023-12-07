@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://ceyk6nf82ndka"]
+
+[ext_resource type="PackedScene" uid="uid://jl26f4vtqj0g" path="res://packtingo/box_2.glb" id="1_yt60k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nvwee"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_mnf6o"]
+
+[node name="PrizeBox" type="StaticBody3D"]
+
+[node name="box_2" parent="." instance=ExtResource("1_yt60k")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)
+shape = SubResource("BoxShape3D_nvwee")
+
+[node name="Direction" type="Marker3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+
+[node name="BoxActionable" type="Area3D" parent="Direction"]
+transform = Transform3D(4.49895, 0.017369, -2.18158, -0.0137881, 6.99997, 0, 2.18157, 0.00842233, 4.49897, -0.077576, 0, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Direction/BoxActionable"]
+transform = Transform3D(0.299992, 0.0022143, -1.93715e-07, -0.00221428, 0.29999, 0.00107373, 8.10623e-06, -0.0010737, 0.299998, 0.000367031, 7.22939e-07, -0.000177979)
+shape = SubResource("SphereShape3D_mnf6o")

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@chainlink/contracts/v0.8/interfaces/LinkTokenInterface.sol";
+import "@chainlink/contracts/v0.8/shared/interfaces/LinkTokenInterface.sol";
 import "@chainlink/contracts/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/v0.8/vrf/VRFConsumerBaseV2.sol";
 import {IERC20} from "@chainlink/contracts-ccip/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
 
 contract DestroyBox is VRFConsumerBaseV2 {
