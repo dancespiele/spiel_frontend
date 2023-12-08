@@ -19,9 +19,13 @@ var signer: JavaScriptObject
 var tx_hash: String
 var token: String
 var error_message: String
+var fees: int
 
 func get_random_box():
 	window.provider.getSigner().then(get_play_destroy_the_box_callback_ref)
+
+func get_fees():
+	return window.Number(ethers.formatUnits(fee_destroy_ball, 18))
 
 func get_play_destroy_the_box_callback(args):
 	if args[0]:
