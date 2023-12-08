@@ -55,7 +55,7 @@ export class PrizeController {
 
       Logger.log('Elegible account set')
 
-      await this.prizeService.updateRequestIdPrize(prize_id, requestId)
+      await this.prizeService.updateRequestIdPrize(prize_id, requestId, token)
     } catch (error) {
       throw new InternalServerErrorException(error)
     }

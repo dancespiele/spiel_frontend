@@ -70,7 +70,8 @@ export class PrizeService {
           throw new Error("Error getting score")
       }
 
-      return Functions.encodeString(response.data);
+
+      return Functions.encodeString(JSON.stringify(response.data));
     `
   }
 
@@ -185,11 +186,16 @@ export class PrizeService {
     await transaction.wait()
   }
 
-  async updateRequestIdPrize(prizeId: string, requestId: string) {
+  async updateRequestIdPrize(prizeId: string, requestId: string, token: string) {
     await firstValueFrom(
       this.httpServer.put(`${this.configService.get('BACKEND_URL')}/prize_requested`, {
         prize_id: prizeId,
         request_id: requestId,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
       }),
     )
   }
