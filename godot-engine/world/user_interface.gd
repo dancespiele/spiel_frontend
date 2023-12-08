@@ -210,7 +210,11 @@ func check_prizes(token: String):
 		HTTPClient.METHOD_GET,
 	)
 
-func _request_prize_completed(_result, _response_code, _headers, body):
+func _request_prize_completed(_result, response_code, _headers, body):
+	if response_code == 500:
+		console.error("Error to get prizes or not prizes yet")
+		return
+
 	var response = JSON.parse_string(body.get_string_from_utf8())
 
 	if response.size() > 0:

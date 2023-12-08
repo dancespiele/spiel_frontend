@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cgam5dqitxleh"]
+[gd_scene load_steps=12 format=3 uid="uid://cgam5dqitxleh"]
 
 [ext_resource type="Script" path="res://packtingo/packtingo.gd" id="1_dcqax"]
 [ext_resource type="PackedScene" uid="uid://bjoboqmbcapei" path="res://packtingo/wall.tscn" id="1_ovxvj"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://dxnmbxraxs07x" path="res://packtingo/floor.glb" id="2_ibla5"]
 [ext_resource type="PackedScene" uid="uid://btatvnsrlckhu" path="res://packtingo/ball.tscn" id="4_wypf4"]
 [ext_resource type="Script" path="res://packtingo/points.gd" id="6_ghjeu"]
-[ext_resource type="Script" path="res://packtingo/lifes.gd" id="7_2b5g4"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ieno5"]
 
@@ -15,9 +14,6 @@ ambient_light_color = Color(0.419608, 0.501961, 0.992157, 1)
 ambient_light_energy = 3.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_4g3sn"]
-font_size = 30
-
-[sub_resource type="LabelSettings" id="LabelSettings_nmwo4"]
 font_size = 30
 
 [sub_resource type="LabelSettings" id="LabelSettings_1qkcc"]
@@ -83,16 +79,6 @@ offset_bottom = 76.0
 text = "Score: 4"
 label_settings = SubResource("LabelSettings_4g3sn")
 script = ExtResource("6_ghjeu")
-
-[node name="Lifes" type="Label" parent="Switch/UserInterface"]
-layout_mode = 0
-offset_left = 945.0
-offset_top = 34.0
-offset_right = 1066.0
-offset_bottom = 79.0
-text = "Lifes 3"
-label_settings = SubResource("LabelSettings_nmwo4")
-script = ExtResource("7_2b5g4")
 
 [node name="LoseGame" type="Label" parent="Switch/UserInterface"]
 visible = false
