@@ -2,7 +2,7 @@ module.exports = {
   NODE_ENV: 'staging',
   JWT_SECRET_KEY: process.env.SECRET,
   JWT_EXPIRY_KEY: process.env.JWT_EXPIRY_KEY,
-  SEED_WORDS: process.env.SEED_WORDS?.replace(',', ' '),
+  SEED_WORDS: process.env.SEED_WORDS?.replace(/,/g, ' '),
   RPC_URL: process.env.RPC_URL,
   LINK_ADDRESS: process.env.LINK_ADDRESS,
   ROUTER_ADDRESS: process.env.ROUTER_ADDRESS,
