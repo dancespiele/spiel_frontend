@@ -14,14 +14,18 @@ var window := JavaScriptBridge.get_interface("window")
 
 var link_token_address := "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address := "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
-var fee_destroy_ball := "80000000000000000"
+var fee_destroy_ball := "500000000000000000"
 var signer: JavaScriptObject
 var tx_hash: String
 var token: String
 var error_message: String
+var fees: int
 
 func get_random_box():
 	window.provider.getSigner().then(get_play_destroy_the_box_callback_ref)
+
+func get_fees():
+	return window.Number(ethers.formatUnits(fee_destroy_ball, 18))
 
 func get_play_destroy_the_box_callback(args):
 	if args[0]:
