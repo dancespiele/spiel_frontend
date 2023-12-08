@@ -193,7 +193,7 @@ pub async fn update_request_id_prize(
 ) -> Result<impl Reply, Rejection> {
     use crate::schema::prize::dsl::*;
 
-    if session.address != env::var("OWNER_ADDRESS").unwrap() {
+    if session.address.to_lowercase() != env::var("OWNER_ADDRESS").unwrap().to_lowercase() {
         return Err(reject::custom(Forbidden {
             error: String::from("This address doesn't match with the action address"),
         }));
