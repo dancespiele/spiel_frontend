@@ -1,66 +1,15 @@
-## Foundry
+# WEB 4d LIFE
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Web 4D Life is a metaverso that server three purposes “entertainment”, “services” and “social network”
 
-Foundry consists of:
+## How to try locally
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+1. Install docker and docker compose
+2. Set all the env variables (see docker-compose file)
+3. Run `docker-compose up`
 
-## Documentation
+Here is the [demo](https://spielcrypto.xyz:3030/)
 
-https://book.getfoundry.sh/
+## Run solidity tests
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+`forge test -vvv --fork-url https://api.avax-test.network/ext/bc/C/rpc`
