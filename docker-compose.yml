@@ -82,7 +82,7 @@ services:
       SEED_WORDS: ${SEED_WORDS}
       SECRET: ${SECRET} 
       DON_ID: ${DON_ID}
-      HOSTNAME: 0.0.0.0:3200
+      HOSTNAME: 0.0.0.0
       NODE_ENV: production
     ports:
       - "3200:3200"

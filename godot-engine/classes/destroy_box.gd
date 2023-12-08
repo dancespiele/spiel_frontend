@@ -14,7 +14,7 @@ var window := JavaScriptBridge.get_interface("window")
 
 var link_token_address := "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
 var destroy_box_address := "0xdb7124CA606C8353582448403e1C4B8beb98d17b"
-var fee_destroy_ball := "80000000000000000"
+var fee_destroy_ball := "500000000000000000"
 var signer: JavaScriptObject
 var tx_hash: String
 var token: String
