@@ -118,6 +118,6 @@
       "yarn run lint:fix"
     ]
   },
-  "author": "Nevermined",
-  "license": "Apache-2.0"
+  "author": "Francisco Jesus Navarro Cortes",
+  "license": "GPLV3"
 }
