@@ -10,9 +10,9 @@ config_version=5
 
 [application]
 
-config/name="web4DLife"
+config/name="Spielcrypto"
 run/main_scene="res://main_scene.tscn"
-config/features=PackedStringArray("4.1", "Forward Plus")
+config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 run/icon="res://icon.svg"
 
@@ -96,3 +96,7 @@ locale/translations_pot_files=PackedStringArray("res://dialogue/bot_service.dial
 
 3d_physics/layer_1="Bot"
 3d_physics/layer_2="House"
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.980392, 1)

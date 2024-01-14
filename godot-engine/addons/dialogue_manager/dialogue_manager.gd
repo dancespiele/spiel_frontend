@@ -17,6 +17,9 @@ signal dialogue_ended(resource)
 ## Used internally.
 signal bridge_get_next_dialogue_line_completed(line)
 
+## Used inernally
+signal bridge_mutated()
+
 
 const DialogueConstants = preload("./constants.gd")
 const DialogueSettings = preload("./settings.gd")
@@ -285,7 +288,7 @@ func _get_example_balloon_path() -> String:
 
 
 func _has_dotnet_solution() -> bool:
-	if not DialogueSettings.get_setting("has_dotnet_solution", false): return false
+	if not DialogueSettings.get_user_value("has_dotnet_solution", false): return false
 	if not ResourceLoader.exists("res://addons/dialogue_manager/DialogueManager.cs"): return false
 	if load("res://addons/dialogue_manager/DialogueManager.cs") == null: return false
 	return true
@@ -301,6 +304,11 @@ func _bridge_get_next_dialogue_line(resource: DialogueResource, key: String, ext
 
 	var line = await get_next_dialogue_line(resource, key, extra_game_states)
 	bridge_get_next_dialogue_line_completed.emit(line)
+
+
+func _bridge_mutate(mutation: Dictionary, extra_game_states: Array, is_inline_mutation: bool = false) -> void:
+	await mutate(mutation, extra_game_states, is_inline_mutation)
+	bridge_mutated.emit()
 
 
 ### Helpers
@@ -456,7 +464,13 @@ func create_dialogue_line(data: Dictionary, extra_game_states: Array) -> Dialogu
 			})
 
 		DialogueConstants.TYPE_RESPONSE:
-			return null
+			return DialogueLine.new({
+				id = data.get("id", ""),
+				type = DialogueConstants.TYPE_RESPONSE,
+				next_id = data.next_id,
+				tags = data.get("tags", []),
+				extra_game_states = extra_game_states
+			})
 
 		DialogueConstants.TYPE_MUTATION:
 			return DialogueLine.new({

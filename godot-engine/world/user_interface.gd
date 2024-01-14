@@ -6,6 +6,7 @@ var ethers = JavaScriptBridge.get_interface("ethers")
 var ethereum = JavaScriptBridge.get_interface("ethereum")
 var console = JavaScriptBridge.get_interface("console")
 var window = JavaScriptBridge.get_interface("window")
+var process = JavaScriptBridge.get_interface("process")
 
 var add_network_callback_ref = JavaScriptBridge.create_callback((Callable(self, "add_network_callback")))
 var get_file_feed_price_callback_ref = JavaScriptBridge.create_callback((Callable(self, "get_file_feed_price_callback")))
@@ -153,7 +154,10 @@ func get_signer_callback(args):
 
 	var is_account_connected = check_account_connected()
 
-	var endpoint = "https://spielcrypto.xyz:3100/nonce/{address}".format({"address": window.signer.address})
+	var endpoint = "{backend_url}/nonce/{address}".format({
+		"backend_url": OS.get_environment("BACKEND_URL"),
+		"address": window.signer.address
+	})
 
 	if !is_account_connected:
 		Utils.request(
@@ -178,7 +182,7 @@ func get_signature_callback(args):
 	
 	var client_assertion = JSON.stringify({"signature": signature, "message": message})
 
-	var endpoint = "https://spielcrypto.xyz:3100/login"
+	var endpoint = "{endpoint}/login".format({"endpoint": OS.get_environment("BACKEND_URL")})
 
 	Utils.request(
 		self,
@@ -200,7 +204,7 @@ func _request_login_completed(_result, _response_code, _headers, body):
 	check_prizes(response)
 
 func check_prizes(token: String):
-	var endpoint = "https://spielcrypto.xyz:3100/prize";
+	var endpoint = "{endpoint}/prize".format({"endpoint": OS.get_environment("BACKEND_URL")});
 
 	Utils.request(
 		self,

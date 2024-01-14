@@ -17,7 +17,7 @@ func get_prize_callback(args):
 
 func get_prize_tx_wait_callback(args):
   tx_hash = args[0].hash
-  var endpoint = "https://spielcrypto.xyz:3100/pize/{prize_id}".format({"prize_id": prize.id})
+  var endpoint = "{backend_url}/3100/prize/{prize_id}".format({"prize_id": prize.id, "backend_url": OS.get_environment("BACKEND_URL")})
   var auth = Auth.new()
   var token = auth.get_token()
 

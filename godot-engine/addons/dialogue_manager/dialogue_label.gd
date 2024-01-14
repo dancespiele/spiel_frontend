@@ -27,6 +27,14 @@ signal finished_typing()
 ## Automatically have a brief pause when these characters are encountered.
 @export var pause_at_characters: String = ".?!"
 
+## Don't auto pause if the charcter after the pause is one of these.
+@export var skip_pause_at_character_if_followed_by: String = ")\""
+
+## Don't auto pause after these abbreviations (only if "." is in `pause_at_characters`).[br]
+## Abbreviations are limitted to 5 characters in length [br]
+## Does not support multi-period abbreviations (ex. "p.m.")
+@export var skip_pause_at_abbreviations: PackedStringArray = ["Mr", "Mrs", "Ms", "Dr", "etc", "eg", "ex"]
+
 ## The amount of time to pause when exposing a character present in pause_at_characters.
 @export var seconds_per_pause_step: float = 0.3
 
@@ -146,7 +154,7 @@ func _get_pause(at_index: int) -> float:
 # Get the speed for the current typing position
 func _get_speed(at_index: int) -> float:
 	var speed: float = 1
-	for index in dialogue_line.speeds:
+	for index: int in dialogue_line.speeds:
 		if index > at_index:
 			return speed
 		speed = dialogue_line.speeds[index]
@@ -155,7 +163,7 @@ func _get_speed(at_index: int) -> float:
 
 # Run any inline mutations that haven't been run yet
 func _mutate_remaining_mutations() -> void:
-	for i in range(visible_characters, get_total_character_count() + 1):
+	for i: int in range(visible_characters, get_total_character_count() + 1):
 		_mutate_inline_mutations(i)
 
 
@@ -176,11 +184,24 @@ func _should_auto_pause() -> bool:
 
 	var parsed_text: String = get_parsed_text()
 
+	# Ignore pause characters if they are next to a non-pause character
+	if parsed_text[visible_characters] in skip_pause_at_character_if_followed_by.split():
+		return false
+
 	# Ignore "." if it's between two numbers
 	if visible_characters > 3 and parsed_text[visible_characters - 1] == ".":
 		var possible_number: String = parsed_text.substr(visible_characters - 2, 3)
 		if str(float(possible_number)) == possible_number:
 			return false
+
+	# Ignore "." if it's used in an abbreviation
+	# Note: does NOT support multi-period abbreviations (ex. p.m.)
+	if "." in pause_at_characters and parsed_text[visible_characters - 1] == ".":
+		for abbreviation: String in skip_pause_at_abbreviations:
+			if visible_characters >= abbreviation.length():
+				var previous_characters: String = parsed_text.substr(visible_characters - abbreviation.length() - 1, abbreviation.length())
+				if previous_characters == abbreviation:
+					return false
 
 	# Ignore two non-"." characters next to each other
 	var other_pause_characters: PackedStringArray = pause_at_characters.replace(".", "").split()

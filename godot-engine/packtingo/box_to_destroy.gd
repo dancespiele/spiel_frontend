@@ -20,11 +20,11 @@ func _process(_delta):
 func send_score():
 	var auth = Auth.new()
 	var score = score_label.score;
-	var score_body = JSON.stringify({"score": score});
+	var score_body = JSON.stringify({"score": score})
 
 	var token = auth.get_token()
 
-	var endopoint := "https://spielcrypto.xyz:3100/score"
+	var endopoint := "{endpoint}/score".format({"endpoint": OS.get_environment("BACKEND_URL")})
 
 	Utils.request(self, self._create_score_complete,
 	["Content-Type: application/json", "Authorization: {auth}".format({"auth": token})],

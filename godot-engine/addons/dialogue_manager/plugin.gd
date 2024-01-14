@@ -86,6 +86,15 @@ func _get_plugin_icon() -> Texture2D:
 
 
 func _handles(object) -> bool:
+	var editor_settings: EditorSettings = get_editor_interface().get_editor_settings()
+	var external_editor: String = editor_settings.get_setting("text_editor/external/exec_path")
+	var use_external_editor: bool = editor_settings.get_setting("text_editor/external/use_external_editor") and external_editor != ""
+	if object is DialogueResource and use_external_editor and DialogueSettings.get_user_value("open_in_external_editor", false):
+		var project_path: String = ProjectSettings.globalize_path("res://")
+		var file_path: String = ProjectSettings.globalize_path(object.resource_path)
+		OS.create_process(external_editor, [project_path, file_path])
+		return false
+
 	return object is DialogueResource
 
 
@@ -106,7 +115,7 @@ func _build() -> bool:
 		var directory: String = ProjectSettings.get("dotnet/project/solution_directory")
 		var file_name: String = ProjectSettings.get("dotnet/project/assembly_name")
 		var has_dotnet_solution: bool = FileAccess.file_exists("res://%s/%s.sln" % [directory, file_name])
-		DialogueSettings.set_setting("has_dotnet_solution", has_dotnet_solution)
+		DialogueSettings.set_user_value("has_dotnet_solution", has_dotnet_solution)
 
 	# Ignore errors in other files if we are just running the test scene
 	if DialogueSettings.get_user_value("is_running_test_scene", true): return true

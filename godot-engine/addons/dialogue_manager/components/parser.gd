@@ -63,7 +63,7 @@ var character_names: PackedStringArray = []
 var first_title: String = ""
 var errors: Array[Dictionary] = []
 
-var _imported_line_map: Array[Dictionary] = []
+var _imported_line_map: Dictionary = {}
 var _imported_line_count: int = 0
 
 var while_loopbacks: Array[String] = []
@@ -231,10 +231,10 @@ func parse(text: String, path: String) -> Error:
 
 		# Title
 		elif is_title_line(raw_line):
+			line["type"] = DialogueConstants.TYPE_TITLE
 			if not raw_lines[id].begins_with("~"):
 				add_error(id, indent_size + 2, DialogueConstants.ERR_NESTED_TITLE)
 			else:
-				line["type"] = DialogueConstants.TYPE_TITLE
 				line["text"] = extract_title(raw_line)
 				# Titles can't have numbers as the first letter (unless they are external titles which get replaced with hashes)
 				if id >= _imported_line_count and BEGINS_WITH_NUMBER_REGEX.search(line.text):
@@ -307,6 +307,10 @@ func parse(text: String, path: String) -> Error:
 
 			# Ignore this line when checking for indent errors
 			remove_error(parent_line.id.to_int(), DialogueConstants.ERR_INVALID_INDENTATION)
+
+			var next_line = raw_lines[parent_line.next_id.to_int()]
+			if not is_dialogue_line(next_line) and get_indent(next_line) >= indent_size:
+				add_error(parent_line.next_id.to_int(), indent_size, DialogueConstants.ERR_INVALID_INDENTATION)
 
 			continue
 
@@ -393,7 +397,12 @@ func parse(text: String, path: String) -> Error:
 				add_error(id, indent_size, DialogueConstants.ERR_INVALID_CONDITION_INDENTATION)
 
 		# Line after normal line is indented to the right
-		elif line.type in [DialogueConstants.TYPE_TITLE, DialogueConstants.TYPE_DIALOGUE, DialogueConstants.TYPE_MUTATION, DialogueConstants.TYPE_GOTO] and is_valid_id(line.next_id):
+		elif line.type in [
+				DialogueConstants.TYPE_TITLE,
+				DialogueConstants.TYPE_DIALOGUE,
+				DialogueConstants.TYPE_MUTATION,
+				DialogueConstants.TYPE_GOTO
+			] and is_valid_id(line.next_id):
 			var next_line = raw_lines[line.next_id.to_int()]
 			if next_line != null and get_indent(next_line) > indent_size:
 				add_error(id, indent_size, DialogueConstants.ERR_INVALID_INDENTATION)
@@ -456,7 +465,7 @@ func get_errors() -> Array[Dictionary]:
 func prepare(text: String, path: String, include_imported_titles_hashes: bool = true) -> void:
 	errors = []
 	imported_paths = []
-	_imported_line_map = []
+	_imported_line_map = {}
 	while_loopbacks = []
 	titles = {}
 	character_names = []
@@ -474,31 +483,33 @@ func prepare(text: String, path: String, include_imported_titles_hashes: bool = 
 		var line = raw_lines[id]
 		if is_import_line(line):
 			var import_data = extract_import_path_and_name(line)
+			var import_hash: int = import_data.path.hash()
 			if import_data.size() > 0:
-				# Make a map so we can refer compiled lines to where they were imported from
-				_imported_line_map.append({
-					hash = import_data.path.hash(),
-					imported_on_line_number = id,
-					from_line = 0,
-					to_line = 0
-				})
-
 				# Keep track of titles so we can add imported ones later
-				if str(import_data.path.hash()) in imported_titles.keys():
+				if str(import_hash) in imported_titles.keys():
 					add_error(id, 0, DialogueConstants.ERR_FILE_ALREADY_IMPORTED)
 				if import_data.prefix in imported_titles.values():
 					add_error(id, 0, DialogueConstants.ERR_DUPLICATE_IMPORT_NAME)
-				imported_titles[str(import_data.path.hash())] = import_data.prefix
+				imported_titles[str(import_hash)] = import_data.prefix
 
 				# Import the file content
-				if not import_data.path.hash() in known_imports:
+				if not known_imports.has(import_hash):
 					var error: Error = import_content(import_data.path, import_data.prefix, _imported_line_map, known_imports)
 					if error != OK:
 						add_error(id, 0, error)
 
+				# Make a map so we can refer compiled lines to where they were imported from
+				if not _imported_line_map.has(import_hash):
+					_imported_line_map[import_hash] = {
+						hash = import_hash,
+						imported_on_line_number = id,
+						from_line = 0,
+						to_line = 0
+					}
+
 	var imported_content: String =  ""
 	var cummulative_line_number: int = 0
-	for item in _imported_line_map:
+	for item in _imported_line_map.values():
 		item["from_line"] = cummulative_line_number
 		if known_imports.has(item.hash):
 			cummulative_line_number += known_imports[item.hash].split("\n").size()
@@ -538,7 +549,7 @@ func prepare(text: String, path: String, include_imported_titles_hashes: bool = 
 
 func add_error(line_number: int, column_number: int, error: int) -> void:
 	# See if the error was in an imported file
-	for item in _imported_line_map:
+	for item in _imported_line_map.values():
 		if line_number < item.to_line:
 			errors.append({
 				line_number = item.imported_on_line_number,
@@ -614,6 +625,7 @@ func is_nested_dialogue_line(raw_line: String, parsed_lines: Dictionary, raw_lin
 
 
 func is_dialogue_line(line: String) -> bool:
+	if line == null: return false
 	if is_response_line(line): return false
 	if is_title_line(line): return false
 	if is_condition_line(line, true): return false
@@ -799,7 +811,7 @@ func find_next_line_after_conditions(line_number: int) -> String:
 
 				line_indent = get_indent(line)
 				if line_indent < expected_indent:
-					return parsed_lines[str(p)].next_id_after
+					return parsed_lines[str(p)].get("next_id_after", DialogueConstants.ID_NULL)
 
 	return DialogueConstants.ID_END_CONVERSATION
 
@@ -895,7 +907,7 @@ func get_autoload_names() -> PackedStringArray:
 
 
 ## Import content from another dialogue file or return an ERR
-func import_content(path: String, prefix: String, imported_line_map: Array[Dictionary], known_imports: Dictionary) -> Error:
+func import_content(path: String, prefix: String, imported_line_map: Dictionary, known_imports: Dictionary) -> Error:
 	if FileAccess.file_exists(path):
 		var file = FileAccess.open(path, FileAccess.READ)
 		var content: PackedStringArray = file.get_as_text().split("\n")
@@ -907,18 +919,21 @@ func import_content(path: String, prefix: String, imported_line_map: Array[Dicti
 			if is_import_line(line):
 				var import = extract_import_path_and_name(line)
 				if import.size() > 0:
-					# Make a map so we can refer compiled lines to where they were imported from
-					imported_line_map.append({
-						hash = import.path.hash(),
-						imported_on_line_number = index,
-						from_line = 0,
-						to_line = 0
-					})
 					if not known_imports.has(import.path.hash()):
 						# Add an empty record into the keys just so we don't end up with cyclic dependencies
 						known_imports[import.path.hash()] = ""
 						if import_content(import.path, import.prefix, imported_line_map, known_imports) != OK:
 							return ERR_LINK_FAILED
+
+					if not imported_line_map.has(import.path.hash()):
+						# Make a map so we can refer compiled lines to where they were imported from
+						imported_line_map[import.path.hash()] = {
+							hash = import.path.hash(),
+							imported_on_line_number = index,
+							from_line = 0,
+							to_line = 0
+						}
+
 					imported_titles[import.prefix] = import.path.hash()
 
 		var origin_hash: int = -1
@@ -1176,10 +1191,10 @@ func extract_markers(line: String) -> ResolvedLineData:
 	var escaped_close_brackets: PackedInt32Array = []
 	for i in range(0, text.length() - 1):
 		if text.substr(i, 2) == "\\[":
-			text = text.erase(i, 2).insert(i, "!")
+			text = text.substr(0, i) + "!" + text.substr(i + 2)
 			escaped_open_brackets.append(i)
 		elif text.substr(i, 2) == "\\]":
-			text = text.erase(i, 2).insert(i, "!")
+			text = text.substr(0, i) + "!" + text.substr(i + 2)
 			escaped_close_brackets.append(i)
 
 	# Extract all of the BB codes so that we know the actual text (we could do this easier with
@@ -1247,6 +1262,14 @@ func extract_markers(line: String) -> ResolvedLineData:
 			if bb.offset_start > bbcode.start:
 				bb.offset_start -= length
 				bb.start -= length
+
+		# Find any escaped brackets after this that need moving
+		for i in range(0, escaped_open_brackets.size()):
+			if escaped_open_brackets[i] > bbcode.start:
+				escaped_open_brackets[i] -= length
+		for i in range(0, escaped_close_brackets.size()):
+			if escaped_close_brackets[i] > bbcode.start:
+				escaped_close_brackets[i] -= length
 
 		text = text.substr(0, index) + text.substr(index + length)
 		next_bbcode_position = find_bbcode_positions_in_string(text, false)
@@ -1482,10 +1505,23 @@ func build_token_tree(tokens: Array[Dictionary], line_type: String, expected_clo
 				})
 
 			DialogueConstants.TOKEN_NUMBER:
-				tree.append({
-					type = token.type,
-					value = token.value.to_float() if "." in token.value else token.value.to_int()
-				})
+				var value = token.value.to_float() if "." in token.value else token.value.to_int()
+				# If previous token is a number and this one is a negative number then
+				# inject a minus operator token in between them.
+				if tree.size() > 0 and token.value.begins_with("-") and tree[tree.size() - 1].type == DialogueConstants.TOKEN_NUMBER:
+					tree.append(({
+						type = DialogueConstants.TOKEN_OPERATOR,
+						value = "-"
+					}))
+					tree.append({
+						type = token.type,
+						value = -1 * value
+					})
+				else:
+					tree.append({
+						type = token.type,
+						value = value
+					})
 
 	if expected_close_token != "":
 		return [build_token_tree_error(DialogueConstants.ERR_MISSING_CLOSING_BRACKET, tokens[0].index), tokens]
@@ -1493,13 +1529,18 @@ func build_token_tree(tokens: Array[Dictionary], line_type: String, expected_clo
 	return [tree, tokens]
 
 
-func check_next_token(token: Dictionary, next_tokens: Array[Dictionary], line_type: String) -> int:
-	var next_token_type = null
+func check_next_token(token: Dictionary, next_tokens: Array[Dictionary], line_type: String) -> Error:
+	var next_token: Dictionary = { type = null }
 	if next_tokens.size() > 0:
-		next_token_type = next_tokens.front().type
+		next_token = next_tokens.front()
 
+	# Guard for assigning in a condition
 	if token.type == DialogueConstants.TOKEN_ASSIGNMENT and line_type == DialogueConstants.TYPE_CONDITION:
 		return DialogueConstants.ERR_UNEXPECTED_ASSIGNMENT
+
+	# Special case for a negative number after this one
+	if token.type == DialogueConstants.TOKEN_NUMBER and next_token.type == DialogueConstants.TOKEN_NUMBER and next_token.value.begins_with("-"):
+		return OK
 
 	var expected_token_types = []
 	var unexpected_token_types = []
@@ -1608,8 +1649,8 @@ func check_next_token(token: Dictionary, next_tokens: Array[Dictionary], line_ty
 				DialogueConstants.TOKEN_BRACKET_OPEN
 			]
 
-	if (expected_token_types.size() > 0 and not next_token_type in expected_token_types or unexpected_token_types.size() > 0 and next_token_type in unexpected_token_types):
-		match next_token_type:
+	if (expected_token_types.size() > 0 and not next_token.type in expected_token_types or unexpected_token_types.size() > 0 and next_token.type in unexpected_token_types):
+		match next_token.type:
 			null:
 				return DialogueConstants.ERR_UNEXPECTED_END_OF_EXPRESSION
 
