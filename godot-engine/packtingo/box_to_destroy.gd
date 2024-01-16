@@ -5,6 +5,7 @@ signal destroyed
 var win_game_label: Node
 var score_label: Node
 var console = JavaScriptBridge.get_interface("console")
+var backend_url = ConfigEnv.new().get_endpoint().backend_url
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -24,7 +25,7 @@ func send_score():
 
 	var token = auth.get_token()
 
-	var endopoint := "{endpoint}/score".format({"endpoint": OS.get_environment("BACKEND_URL")})
+	var endopoint := "{endpoint}/score".format({"endpoint": backend_url})
 
 	Utils.request(self, self._create_score_complete,
 	["Content-Type: application/json", "Authorization: {auth}".format({"auth": token})],

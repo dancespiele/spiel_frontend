@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo714iq5qna36"]
+
+[ext_resource type="Script" path="res://networks/eth/eth.gd" id="1_6hknn"]
+
+[node name="Eth" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_6hknn")
+
+[node name="WalletConnect" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 903.0
+offset_top = 35.0
+offset_right = 1081.0
+offset_bottom = 71.0

@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_p5x5b"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="6_hj064"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_7dtyo"]
-[ext_resource type="PackedScene" uid="uid://bo714iq5qna36" path="res://world/user_interface.tscn" id="8_qwdmi"]
+[ext_resource type="PackedScene" uid="uid://bo714iq5qna36" path="res://networks/eth/eth.tscn" id="8_qwdmi"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt64u"]
 
