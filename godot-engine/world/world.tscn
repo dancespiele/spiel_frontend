@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://dbdf8kk8emcm7"]
+[gd_scene load_steps=13 format=3 uid="uid://dbdf8kk8emcm7"]
 
 [ext_resource type="PackedScene" uid="uid://davc27j3u2ih" path="res://assets/ground.glb" id="1_edmev"]
+[ext_resource type="Script" path="res://world/world.gd" id="1_r1box"]
 [ext_resource type="PackedScene" uid="uid://bmvtva1rv30qu" path="res://assets/building.glb" id="2_e622h"]
 [ext_resource type="PackedScene" uid="uid://b023x560ntcpf" path="res://world/bot.tscn" id="3_q1ogf"]
 [ext_resource type="PackedScene" uid="uid://cayj4noi66rh1" path="res://world/player.tscn" id="4_jnefc"]
@@ -21,6 +22,7 @@ v_offset = 0.0
 fov = 75.0
 
 [node name="World" type="Node3D"]
+script = ExtResource("1_r1box")
 
 [node name="GroundCollision" type="StaticBody3D" parent="."]
 
@@ -73,4 +75,4 @@ transform = Transform3D(0.00136133, 0, -0.999999, 0, 1, 0, 0.999999, 0, 0.001361
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 script = ExtResource("7_7dtyo")
 
-[node name="UserInterface" parent="." instance=ExtResource("8_qwdmi")]
+[node name="Eth" parent="." instance=ExtResource("8_qwdmi")]

@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_11"
+type="Resource"
+uid="uid://dxvl2coeka7fy"
+path="res://.godot/imported/quick_start.dialogue-5131cb8b696bc82bad4bb4107075377a.tres"
+
+[deps]
+
+source_file="res://dialogue/quick_start.dialogue"
+dest_files=["res://.godot/imported/quick_start.dialogue-5131cb8b696bc82bad4bb4107075377a.tres"]
+
+[params]
+
+defaults=true
