@@ -1,7 +1,7 @@
 class_name ConfigEnv
 
 var network := "testnet"
-var env_name = "development"
+var env_name = "production"
 
 var endpoints = {
   "development": {
